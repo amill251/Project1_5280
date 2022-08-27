@@ -107,20 +107,17 @@ public class LoginFragment extends Fragment {
                     showAlert(error[0]);
                 } else {
                     mAuth.signInWithEmailAndPassword(inputAddress.getText().toString(), inputPassword.getText().toString())
-                            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        Log.d("myapp", "Login successful");
-                                        mListener.login();
-                                    } else {
-                                        Log.d("myapp", "Login failed");
-                                        Log.d("myapp", task.getException().getMessage());
-                                        error[0] = task.getException().getMessage() + "";
-                                    }
-
-                                    showAlert(error[0]);
+                            .addOnCompleteListener(getActivity(), task -> {
+                                if (task.isSuccessful()) {
+                                    Log.d("myapp", "Login successful");
+                                    mListener.login();
+                                } else {
+                                    Log.d("myapp", "Login failed");
+                                    Log.d("myapp", task.getException().getMessage());
+                                    error[0] = task.getException().getMessage() + "";
                                 }
+
+                                showAlert(error[0]);
                             });
                 }
             }
@@ -132,11 +129,8 @@ public class LoginFragment extends Fragment {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("Error")
                     .setMessage(error)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                    .setPositiveButton("OK", (dialog, which) -> {
 
-                        }
                     }).show();
         }
     }

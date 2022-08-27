@@ -36,7 +36,7 @@ public class SignupFragment extends Fragment {
     IListener mListener;
     interface IListener {
         public void registerCancelled();
-        public void registerSubmitted();
+        public void loginSuccess();
     }
 
     @Override
@@ -109,22 +109,10 @@ public class SignupFragment extends Fragment {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         Log.d("myapp", "Register successful");
-                                        String email = inputEmailAdress.getText().toString();
-                                        /*HashMap<String, Object> head = new HashMap<>();
-                                        head.put("Name", inputName.getText().toString());
-                                        head.put("Id", email);
-                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                        db.collection("Heads")
-                                                .document(inputName.getText().toString())
-                                                .set(head)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
-                                                        Log.d("my app", head.get("Id") + " registered");
-                                                    }
-                                                });*/
 
-                                        mListener.registerSubmitted();
+
+
+                                        mListener.loginSuccess();
                                     } else {
                                         Log.d("myapp", "Register failed");
                                         Log.d("myapp", task.getException().getMessage());

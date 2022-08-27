@@ -1,7 +1,9 @@
 package com.group3.project1.chatapp;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -10,6 +12,11 @@ import android.view.ViewGroup;
 
 public class ChatroomsFragment extends Fragment {
 
+
+    IListener mListener;
+    interface IListener {
+        public void signOut();
+    }
 
     public ChatroomsFragment() {
         // Required empty public constructor
@@ -31,9 +38,27 @@ public class ChatroomsFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if (context instanceof LoginFragment.IListener) {
+            mListener = (IListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement IListener");
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chatrooms, container, false);
+        getActivity().setTitle("Chatrooms");
+
+        btnSignOut(view);
         return view;
+    }
+
+    private void btnSignOut(final View view) {
+        view.findViewById(R.id.btnSignOut).setOnClickListener(v -> mListener.signOut());
     }
 }

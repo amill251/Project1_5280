@@ -1,12 +1,10 @@
 # Project 1: ITIS 5280
-## UNC CHARLOTTE | Advanced Mobile Application Development
-
-### Members
+## UNC Charlotte | Advanced Mobile Application Development
+### Members:
 - Alex Miller
 - Tom Va
 - Jared Tomulynas
 
----
 ## Link for Wireframe
 [Wireframe - Justinmind.com](https://www.justinmind.com/usernote/tests/72514794/72516392/72516394/index.html)
 

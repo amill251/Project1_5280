@@ -31,7 +31,7 @@ public class LoginFragment extends Fragment {
     IListener mListener;
     interface IListener {
         public void signup();
-        public void login();
+        public void loginSuccess();
     }
 
     @Override
@@ -78,12 +78,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void btnCreateAccount(final View view) {
-        view.findViewById(R.id.btnCreateAccount).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.signup();
-            }
-        });
+        view.findViewById(R.id.btnCreateAccount).setOnClickListener(v -> mListener.signup());
     }
 
     private void btnSignin(final View view) {
@@ -110,7 +105,7 @@ public class LoginFragment extends Fragment {
                             .addOnCompleteListener(getActivity(), task -> {
                                 if (task.isSuccessful()) {
                                     Log.d("myapp", "Login successful");
-                                    mListener.login();
+                                    mListener.loginSuccess();
                                 } else {
                                     Log.d("myapp", "Login failed");
                                     Log.d("myapp", task.getException().getMessage());

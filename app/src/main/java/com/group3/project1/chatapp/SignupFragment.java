@@ -20,13 +20,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
 
 
 public class SignupFragment extends Fragment {
@@ -79,16 +75,16 @@ public class SignupFragment extends Fragment {
 
         EditText inputEmailAdress = view.findViewById(R.id.inputEmailAddress);
         EditText inputPassword = view.findViewById(R.id.inputPassword);
-        EditText inputName = view.findViewById(R.id.inputName);
+        EditText inputName = view.findViewById(R.id.inputFirstName);
 
-        view.findViewById(R.id.buttonCancel).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btnRegisterCancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.registerCancelled();
             }
         });
 
-        view.findViewById(R.id.buttonSubmit).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btnRegister).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String[] error = new String[1];

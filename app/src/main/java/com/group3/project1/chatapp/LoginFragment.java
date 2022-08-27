@@ -20,19 +20,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
 
 public class LoginFragment extends Fragment {
     private FirebaseAuth mAuth;
@@ -43,8 +30,8 @@ public class LoginFragment extends Fragment {
 
     IListener mListener;
     interface IListener {
-        //        public void register();
-        public void login(String adminPassword);
+        public void signup();
+        public void login();
     }
 
     @Override
@@ -82,10 +69,29 @@ public class LoginFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
+
+        btnSignin(view);
+
+        btnCreateAccount(view);
+
+        return view;
+    }
+
+    private void btnCreateAccount(final View view) {
+        view.findViewById(R.id.btnCreateAccount).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.signup();
+            }
+        });
+    }
+
+    private void btnSignin(final View view) {
+
         EditText inputAddress = view.findViewById(R.id.inputAddress);
         EditText inputPassword = view.findViewById(R.id.inputPassword);
 
-        view.findViewById(R.id.buttonSubmit).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btnRegister).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mAuth = FirebaseAuth.getInstance();
@@ -99,11 +105,26 @@ public class LoginFragment extends Fragment {
                     Toast.makeText(getActivity(), "Enter password", Toast.LENGTH_LONG).show();
                     error[0] = "Password required";
                     showAlert(error[0]);
+                } else {
+                    mAuth.signInWithEmailAndPassword(inputAddress.getText().toString(), inputPassword.getText().toString())
+                            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d("myapp", "Login successful");
+                                        mListener.login();
+                                    } else {
+                                        Log.d("myapp", "Login failed");
+                                        Log.d("myapp", task.getException().getMessage());
+                                        error[0] = task.getException().getMessage() + "";
+                                    }
+
+                                    showAlert(error[0]);
+                                }
+                            });
                 }
             }
         });
-
-        return view;
     }
 
     private void showAlert(String error) {

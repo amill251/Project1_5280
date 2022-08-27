@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void login(String password) {
+    public void login() {
         /*getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new DisplayFragment(), "DisplayFragment")
                 .addToBackStack(null)
@@ -30,9 +30,17 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void signup() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new SignupFragment(), "SignupFragment")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
     public void registerCancelled() {
-        /*MembersFragment fragment = (MembersFragment) getSupportFragmentManager().findFragmentByTag("MembersFragment");
-        getSupportFragmentManager().popBackStack();*/
+        LoginFragment fragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag("LoginFragment");
+        getSupportFragmentManager().popBackStack();
     }
 
     @Override
@@ -40,4 +48,6 @@ public class MainActivity extends AppCompatActivity implements
         /*MembersFragment fragment = (MembersFragment) getSupportFragmentManager().findFragmentByTag("MembersFragment");
         getSupportFragmentManager().popBackStack();*/
     }
+
+
 }

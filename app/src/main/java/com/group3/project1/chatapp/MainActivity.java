@@ -23,10 +23,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void login() {
-        /*getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerview, new DisplayFragment(), "DisplayFragment")
+        getSupportFragmentManager().popBackStack();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new ChatroomsFragment(), "ChatroomsFragment")
                 .addToBackStack(null)
-                .commit();*/
+                .commit();
     }
 
     @Override
@@ -44,9 +45,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void registerSubmitted() {
-        /*MembersFragment fragment = (MembersFragment) getSupportFragmentManager().findFragmentByTag("MembersFragment");
-        getSupportFragmentManager().popBackStack();*/
+    public void loginSuccess() {
+        getSupportFragmentManager().popBackStack();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new ChatroomsFragment(), "ChatroomsFragment")
+                .addToBackStack(null)
+                .commit();
     }
 
 

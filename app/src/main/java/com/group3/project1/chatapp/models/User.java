@@ -1,6 +1,7 @@
 package com.group3.project1.chatapp.models;
 
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.Objects;
 
 public class User implements Serializable {
@@ -12,6 +13,18 @@ public class User implements Serializable {
 
     public User() {
         // empty constructor
+    }
+
+    public User(String email, String first_name, String last_name, String city, String gender) {
+        this.email = email;
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.city = city;
+        this.gender = gender;
+
+        username = String.valueOf(first_name.toLowerCase().charAt(0)) + last_name.toLowerCase();
+        image_location = null;
+        is_deleted = false;
     }
 
     public User(String email, String username, String first_name, String last_name, String city, String gender, String image_location, Boolean is_deleted) {

@@ -47,7 +47,7 @@ public class SearchFragment extends Fragment {
         binding.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                mListener.gotoSearchOption(options.get(position));
+                mListener.gotoAllUsersFragment();
             }
         });
     }
@@ -66,6 +66,6 @@ public class SearchFragment extends Fragment {
     }
 
     public interface IListener {
-        void gotoSearchOption(String option);
+        void gotoAllUsersFragment();
     }
 }

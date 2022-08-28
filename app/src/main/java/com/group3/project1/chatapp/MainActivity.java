@@ -1,14 +1,15 @@
 package com.group3.project1.chatapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.group3.project1.chatapp.models.User;
 
 public class MainActivity extends AppCompatActivity implements
-        LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener, SearchFragment.IListener {
+        LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener,
+        SearchFragment.IListener {
 
     private FirebaseAuth mAuth;
 
@@ -44,6 +45,14 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new LoginFragment(), "LoginFragment")
                 .commit();
+    }
+
+    @Override
+    public void settings(User user) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, UserProfileFragment.newInstance(user), "UserProfileFragment")
+                .commit();
+        getSupportFragmentManager().popBackStack();
     }
 
     @Override

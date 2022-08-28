@@ -89,6 +89,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void navChatroom(Chatroom chatroom) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new AllChatroomsFragment(), "AllChatroomsFragment")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
     public void registerCancelled() {
         LoginFragment fragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag("LoginFragment");
         getSupportFragmentManager().popBackStack();

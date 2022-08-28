@@ -1,6 +1,7 @@
 package com.group3.project1.chatapp.chatroom;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,19 +10,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.group3.project1.chatapp.R;
-import com.group3.project1.chatapp.models.ChatroomSummary;
+import com.group3.project1.chatapp.models.Chatroom;
+import com.group3.project1.chatapp.models.Message;
 
 import java.util.ArrayList;
 
 public class ChatroomsRecyclerAdapter extends RecyclerView.Adapter<ChatroomsRecyclerAdapter.ChatroomsViewHolder> {
 
-    ArrayList<ChatroomSummary> localSummaryList;
+    ArrayList<Chatroom> localChatroomsList;
     private LayoutInflater inflater;
+    ChatroomsFragment.IListener mListener;
 
-    ChatroomsRecyclerAdapter(Context context, ArrayList summaryList) {
+    ChatroomsRecyclerAdapter(Context context, ArrayList chatrooms, ChatroomsFragment.IListener listener) {
         inflater = LayoutInflater.from(context);
-        this.localSummaryList = summaryList;
+        this.localChatroomsList = chatrooms;
+        mListener = listener;
     }
 
     @NonNull
@@ -33,13 +42,24 @@ public class ChatroomsRecyclerAdapter extends RecyclerView.Adapter<ChatroomsRecy
 
     @Override
     public void onBindViewHolder(@NonNull ChatroomsViewHolder holder, int position) {
-        holder.setTitle(localSummaryList.get(position).getTitle());
-        holder.setLatestMessage(localSummaryList.get(position).getLatestMessage());
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        holder.setTitle(localChatroomsList.get(position).getName());
+        DocumentReference refLatestMessage = localChatroomsList.get(position).getLatest_message();
+        if(refLatestMessage != null) {
+            db.document(refLatestMessage.getPath())
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        Message message = documentSnapshot.toObject(Message.class);
+                        holder.setLatestMessage(message.getText());
+                    })
+                    .addOnFailureListener(e -> Log.e("ERROR", "onFailure: ", e));
+        }
+        holder.itemView.setOnClickListener(view -> mListener.navChatroom(localChatroomsList.get(position)));
     }
 
     @Override
     public int getItemCount() {
-        return localSummaryList.size();
+        return localChatroomsList.size();
     }
 
     public class ChatroomsViewHolder extends RecyclerView.ViewHolder {
@@ -49,6 +69,7 @@ public class ChatroomsRecyclerAdapter extends RecyclerView.Adapter<ChatroomsRecy
             super(itemView);
             title = itemView.findViewById(R.id.Chatroom_Title);
             latestMessage = itemView.findViewById(R.id.Latest_Message);
+
         }
 
         public String getTitle() {

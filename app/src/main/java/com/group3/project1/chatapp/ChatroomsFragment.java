@@ -82,7 +82,7 @@ public class ChatroomsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chatrooms, container, false);
         getActivity().setTitle("Chatrooms");
-
+        summaryList.clear();
         setUser();
         setupRecyclerView(view);
         loadChatrooms(view);
@@ -120,7 +120,7 @@ public class ChatroomsFragment extends Fragment {
                 } catch (Exception e) {
                     Log.e("ERROR", "loadChatrooms: ", e);
                 }
-                
+
                 summaryList.add(new ChatroomSummary(chatroom.getName(), ""));
             }
             chatroomsAdapter.notifyDataSetChanged();

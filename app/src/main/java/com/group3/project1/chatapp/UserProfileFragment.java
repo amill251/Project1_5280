@@ -21,7 +21,7 @@ import com.group3.project1.chatapp.models.User;
  */
 public class UserProfileFragment extends Fragment {
 
-    private static final String USER = "param1";
+    private static final String USER = "USER";
 
     User user;
 

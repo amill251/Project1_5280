@@ -70,8 +70,8 @@ public class UserProfileFragment extends Fragment {
         TextView lName = view.findViewById(R.id.inputUserProfileLastName);
         TextView city = view.findViewById(R.id.inputUserProfileCity);
 
-        fName.setText(user.getFirstName());
-        lName.setText(user.getLastName());
+        fName.setText(user.getFirst_name());
+        lName.setText(user.getLast_name());
         city.setText(user.getCity());
 
         if (User.FEMALE.equalsIgnoreCase(user.getGender())) {
@@ -83,7 +83,7 @@ public class UserProfileFragment extends Fragment {
         }
 
         ImageView imageView = view.findViewById(R.id.imageUserProfile);
-        StorageReference imagesRef = storageRef.child(user.getProfileImageURL());
+        StorageReference imagesRef = storageRef.child(user.getImage_location());
         final long ONE_MEGABYTE = 1024 * 1024;
         imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override

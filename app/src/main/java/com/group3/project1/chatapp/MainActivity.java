@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new ChatroomsFragment(), "ChatroomsFragment")
+
                 .commit();
     }
 
@@ -99,11 +100,23 @@ public class MainActivity extends AppCompatActivity implements
     public void gotoAllUsersFragment() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new AllUsersFragment(), "AllUsersFragment")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void gotoAllChatroomsFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new AllChatroomsFragment(), "AllChatroomsFragment")
+                .addToBackStack(null)
                 .commit();
     }
 
     @Override
     public void gotoUserProfileDetailsFragment(User user) {
-
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new UserProfileFragment(), "UserProfileFragment")
+                .addToBackStack(null)
+                .commit();
     }
 }

@@ -6,25 +6,25 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/textViewSearchOption"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Search Option"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageViewSearchOption"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageViewSearchOption"
-        app:layout_constraintTop_toTopOf="@+id/imageViewSearchOption" />
-
     <ImageView
-        android:id="@+id/imageViewSearchOption"
+        android:id="@+id/imageViewUserProfile"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/textViewUserName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="First Last"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewUserProfile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageViewUserProfile"
+        app:layout_constraintTop_toTopOf="@+id/imageViewUserProfile" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

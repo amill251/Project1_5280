@@ -7,26 +7,17 @@ public class User implements Serializable {
     public static String FEMALE = "FEMALE";
     public static String MALE = "MALE";
 
-    private String firstName;
-    private String lastName;
-    private String city;
-    private String gender;
-    private String email;
+    String firstName, lastName, city, gender, profileImageURL;
 
-    public User(String email, String firstName, String lastName, String city, String gender) {
+    public User() {
+        // empty constructor
+    }
+
+    public User(String firstName, String lastName, String city, String gender, String profileImageURL) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.city = city;
         this.gender = gender;
-        this.email = email;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getFirstName() {
@@ -61,16 +52,24 @@ public class User implements Serializable {
         this.gender = gender;
     }
 
+    public String getProfileImageURL() {
+        return profileImageURL;
+    }
+
+    public void setProfileImageURL(String profileImageURL) {
+        this.profileImageURL = profileImageURL;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return firstName.equals(user.firstName) && lastName.equals(user.lastName) && city.equals(user.city) && gender.equals(user.gender) && email.equals(user.email);
+        return firstName.equals(user.firstName) && lastName.equals(user.lastName) && city.equals(user.city) && gender.equals(user.gender) && profileImageURL.equals(user.profileImageURL);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, city, gender, email);
+        return Objects.hash(firstName, lastName, city, gender, profileImageURL);
     }
 }

@@ -8,8 +8,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.group3.project1.chatapp.models.User;
 
 public class MainActivity extends AppCompatActivity implements
-        LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener,
-        SearchFragment.IListener {
+        LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener, SearchFragment.IListener, AllUsersFragment.IListener {
 
     private FirebaseAuth mAuth;
 
@@ -72,7 +71,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void gotoSearchOption(String option) {
+    public void gotoAllUsersFragment() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new AllUsersFragment(), "AllUsersFragment")
+                .commit();
+    }
+
+    @Override
+    public void gotoUserProfileDetailsFragment(User user) {
 
     }
 }

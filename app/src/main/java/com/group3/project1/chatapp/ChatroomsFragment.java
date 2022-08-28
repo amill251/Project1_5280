@@ -9,15 +9,24 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.group3.project1.chatapp.models.Chatroom;
 import com.group3.project1.chatapp.models.ChatroomSummary;
+import com.group3.project1.chatapp.models.ChatroomUser;
 import com.group3.project1.chatapp.models.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatroomsFragment extends Fragment {
 
@@ -75,7 +84,16 @@ public class ChatroomsFragment extends Fragment {
         getActivity().setTitle("Chatrooms");
 
         setUser();
+        setupRecyclerView(view);
+        loadChatrooms(view);
+        btnSignOut(view);
+        btnNavCreateChatroom(view);
+        btnSettings(view);
 
+        return view;
+    }
+
+    private void setupRecyclerView(View view) {
         RecyclerView chatroomsRecycleView = view.findViewById(R.id.chatrooms_recycle_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         chatroomsRecycleView.setLayoutManager(layoutManager);
@@ -84,12 +102,29 @@ public class ChatroomsFragment extends Fragment {
         chatroomsRecycleView.addItemDecoration(dividerItemDecoration);
         chatroomsAdapter = new ChatroomsRecyclerAdapter(getContext(), summaryList);
         chatroomsRecycleView.setAdapter(chatroomsAdapter);
+    }
 
-        btnSignOut(view);
-        btnNavCreateChatroom(view);
-        btnSettings(view);
-
-        return view;
+    private void loadChatrooms(View view) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("chatrooms").addSnapshotListener((value, error) -> {
+            for(QueryDocumentSnapshot documentSnapshot: value) {
+                Map map = documentSnapshot.getData();
+                Chatroom chatroom = null;
+                try {
+                    chatroom = new Chatroom(
+                            (String) map.get("image_location"),
+                            (Boolean) map.get("is_deleted"),
+                            (String) map.get("name"),
+                            (DocumentReference) map.get("owner")
+                    );
+                } catch (Exception e) {
+                    Log.e("ERROR", "loadChatrooms: ", e);
+                }
+                
+                summaryList.add(new ChatroomSummary(chatroom.getName(), ""));
+            }
+            chatroomsAdapter.notifyDataSetChanged();
+        });
     }
 
     private void btnSignOut(final View view) {

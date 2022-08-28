@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.group3.project1.chatapp.models.Chatroom;
 import com.group3.project1.chatapp.models.ChatroomSummary;
 import com.group3.project1.chatapp.models.User;
 
@@ -30,6 +31,7 @@ public class ChatroomsFragment extends Fragment {
 
     interface IListener {
         public void signOut();
+        public void createChatroom(Chatroom chatroom);
         public void settings(User user);
     }
 
@@ -74,15 +76,6 @@ public class ChatroomsFragment extends Fragment {
 
         setUser();
 
-        summaryList.add(new ChatroomSummary("Chat group", "latest message"));
-        summaryList.add(new ChatroomSummary("Chat group", "latest message"));
-        summaryList.add(new ChatroomSummary("Chat group", "latest message"));
-        summaryList.add(new ChatroomSummary("Chat group", "latest message"));
-        summaryList.add(new ChatroomSummary("Chat group", "latest message"));
-        summaryList.add(new ChatroomSummary("Chat group", "latest message"));
-        summaryList.add(new ChatroomSummary("Chat group", "latest message"));
-        summaryList.add(new ChatroomSummary("Chat group", "latest message"));
-        summaryList.add(new ChatroomSummary("Chat group", "latest message"));
         RecyclerView chatroomsRecycleView = view.findViewById(R.id.chatrooms_recycle_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         chatroomsRecycleView.setLayoutManager(layoutManager);
@@ -93,6 +86,7 @@ public class ChatroomsFragment extends Fragment {
         chatroomsRecycleView.setAdapter(chatroomsAdapter);
 
         btnSignOut(view);
+        btnCreateChatroom(view);
         btnSettings(view);
 
         return view;
@@ -100,6 +94,10 @@ public class ChatroomsFragment extends Fragment {
 
     private void btnSignOut(final View view) {
         view.findViewById(R.id.btnSignOut).setOnClickListener(v -> mListener.signOut());
+    }
+
+    private void btnCreateChatroom(final View view) {
+        view.findViewById(R.id.btnCreateGroup).setOnClickListener(v -> mListener.createChatroom(new Chatroom("Chatroom test")));
     }
 
     private void btnSettings(final View view) {

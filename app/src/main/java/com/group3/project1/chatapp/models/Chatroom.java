@@ -5,8 +5,10 @@ import android.provider.ContactsContract;
 
 import com.google.firebase.firestore.DocumentReference;
 
+import java.io.Serializable;
 
-public class Chatroom {
+
+public class Chatroom implements Serializable {
     String image_location;
     Boolean is_deleted = false;
     String name;

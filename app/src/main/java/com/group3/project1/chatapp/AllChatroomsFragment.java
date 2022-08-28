@@ -21,17 +21,16 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.group3.project1.chatapp.databinding.FragmentAllChatroomsBinding;
-import com.group3.project1.chatapp.databinding.FragmentAllUsersBinding;
-import com.group3.project1.chatapp.models.User;
+import com.group3.project1.chatapp.models.Chatroom;
 
 import java.util.ArrayList;
 
-public class AllChatroomsFragment extends Fragment implements AllChatroomsRecyclerViewAdapter.IChatroomsRecycler {
+public class AllChatroomsFragment extends Fragment {
     FragmentAllChatroomsBinding binding;
     FirebaseAuth mAuth;
     ArrayList<Chatroom> chatrooms = new ArrayList<>();
     LinearLayoutManager layoutManager;
-    AllUsersRecyclerViewAdapter adapter;
+    AllChatroomsRecyclerViewAdapter adapter;
 
     public AllChatroomsFragment() {
         // Required empty public constructor
@@ -49,7 +48,7 @@ public class AllChatroomsFragment extends Fragment implements AllChatroomsRecycl
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(binding.recyclerView.getContext(), layoutManager.getOrientation());
         binding.recyclerView.addItemDecoration(mDividerItemDecoration);
 
-        adapter = new AllChatroomsRecyclerViewAdapter(chatrooms, this);
+        adapter = new AllChatroomsRecyclerViewAdapter(chatrooms);
         binding.recyclerView.setAdapter(adapter);
 
         return binding.getRoot();
@@ -72,8 +71,8 @@ public class AllChatroomsFragment extends Fragment implements AllChatroomsRecycl
                         chatrooms.clear();
 
                         for(QueryDocumentSnapshot document: value) {
-                            Chatroom chatroom = document.toObject(Chatroom.class);
-                            chatrooms.add(chatroom);
+                            //Chatroom chatroom = document.toObject(Chatroom.class);
+                            chatrooms.add(new Chatroom(document.getString("image_location"), document.getString("name")));
                         }
                         adapter.notifyDataSetChanged();
                     }

@@ -1,4 +1,4 @@
-package com.group3.project1.chatapp;
+package com.group3.project1.chatapp.chatroom;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,19 +13,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.group3.project1.chatapp.user.LoginFragment;
+import com.group3.project1.chatapp.R;
 import com.group3.project1.chatapp.models.Chatroom;
 import com.group3.project1.chatapp.models.ChatroomSummary;
-import com.group3.project1.chatapp.models.ChatroomUser;
 import com.group3.project1.chatapp.models.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ChatroomsFragment extends Fragment {
@@ -38,7 +36,7 @@ public class ChatroomsFragment extends Fragment {
     // set at successful login
     User user;
 
-    interface IListener {
+    public interface IListener {
         public void signOut();
         public void navCreateChatroom(Chatroom chatroom);
         public void settings(User user);
@@ -70,7 +68,7 @@ public class ChatroomsFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        if (context instanceof LoginFragment.IListener) {
+        if (context instanceof ChatroomsFragment.IListener) {
             mListener = (IListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement IListener");

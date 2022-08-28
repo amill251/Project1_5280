@@ -1,16 +1,15 @@
-package com.group3.project1.chatapp;
+package com.group3.project1.chatapp.chatroom;
 
 import android.content.Context;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.group3.project1.chatapp.R;
 import com.group3.project1.chatapp.models.ChatroomSummary;
 
 import java.util.ArrayList;

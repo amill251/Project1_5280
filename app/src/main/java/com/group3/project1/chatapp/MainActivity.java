@@ -47,6 +47,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void createChatroom() {
+
+    }
+
+    @Override
     public void settings(User user) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, UserProfileFragment.newInstance(user), "UserProfileFragment")

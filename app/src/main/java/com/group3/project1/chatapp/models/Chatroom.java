@@ -8,12 +8,18 @@ import com.google.firebase.firestore.DocumentReference;
 import java.io.Serializable;
 
 
-public class Chatroom implements Serializable {
+public class Chatroom {
     String image_location;
     Boolean is_deleted = false;
     String name;
     DocumentReference owner;
 
+    public Chatroom(String image_location, Boolean is_deleted, String name, DocumentReference owner) {
+        this.image_location = image_location;
+        this.is_deleted = is_deleted;
+        this.name = name;
+        this.owner = owner;
+    }
 
     public Chatroom(String image_location, String name) {
         this.image_location = image_location;
@@ -22,6 +28,10 @@ public class Chatroom implements Serializable {
 
     public Chatroom(String name) {
         this.name = name;
+    }
+
+    public Chatroom() {
+        //Empty constructor
     }
 
     public DocumentReference getOwner() {

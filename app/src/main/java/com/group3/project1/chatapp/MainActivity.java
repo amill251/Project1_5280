@@ -57,6 +57,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void navCreateChatroom(Chatroom chatroom) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new CreateChatroomFragment(), "CreateChatroom")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    //@Override
     public void createChatroom(Chatroom newChatroom) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         newChatroom.setOwner(db.collection("users").document(mAuth.getCurrentUser().getUid()));

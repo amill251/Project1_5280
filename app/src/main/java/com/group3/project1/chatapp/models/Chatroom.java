@@ -10,7 +10,8 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 import java.io.Serializable;
 
 
-public class Chatroom {
+public class Chatroom implements Serializable {
+
     String image_location;
     Boolean is_deleted = false;
     String name;
@@ -19,6 +20,8 @@ public class Chatroom {
 
     @Exclude
     String id;
+    @Exclude
+    public static final String CURRENT_CHATROOM = "CURRENT_CHATROOM";
 
     public Chatroom(String image_location, Boolean is_deleted, String name, DocumentReference owner, DocumentReference latest_message, String id) {
         this.image_location = image_location;

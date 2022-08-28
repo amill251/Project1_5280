@@ -8,7 +8,7 @@ import android.os.Bundle;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements
-        LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener {
+        LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener, SearchFragment.IListener {
 
     private FirebaseAuth mAuth;
 
@@ -62,5 +62,8 @@ public class MainActivity extends AppCompatActivity implements
                 .commit();
     }
 
+    @Override
+    public void gotoSearchOption(String option) {
 
+    }
 }

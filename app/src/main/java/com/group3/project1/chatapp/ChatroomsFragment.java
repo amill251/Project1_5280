@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.group3.project1.chatapp.models.Chatroom;
 import com.group3.project1.chatapp.models.ChatroomSummary;
 import com.group3.project1.chatapp.models.User;
 
@@ -30,7 +31,7 @@ public class ChatroomsFragment extends Fragment {
 
     interface IListener {
         public void signOut();
-        public void createChatroom();
+        public void createChatroom(Chatroom chatroom);
         public void settings(User user);
     }
 
@@ -96,7 +97,7 @@ public class ChatroomsFragment extends Fragment {
     }
 
     private void btnCreateChatroom(final View view) {
-        view.findViewById(R.id.btnCreateGroup).setOnClickListener(v -> mListener.createChatroom());
+        view.findViewById(R.id.btnCreateGroup).setOnClickListener(v -> mListener.createChatroom(new Chatroom("Chatroom test")));
     }
 
     private void btnSettings(final View view) {

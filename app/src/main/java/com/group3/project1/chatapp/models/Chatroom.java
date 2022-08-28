@@ -4,6 +4,8 @@ package com.group3.project1.chatapp.models;
 import android.provider.ContactsContract;
 
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.io.Serializable;
 
@@ -13,12 +15,18 @@ public class Chatroom {
     Boolean is_deleted = false;
     String name;
     DocumentReference owner;
+    DocumentReference latest_message;
 
-    public Chatroom(String image_location, Boolean is_deleted, String name, DocumentReference owner) {
+    @Exclude
+    String id;
+
+    public Chatroom(String image_location, Boolean is_deleted, String name, DocumentReference owner, DocumentReference latest_message, String id) {
         this.image_location = image_location;
         this.is_deleted = is_deleted;
         this.name = name;
         this.owner = owner;
+        this.latest_message = latest_message;
+        this.id = id;
     }
 
     public Chatroom(String image_location, String name) {
@@ -32,6 +40,14 @@ public class Chatroom {
 
     public Chatroom() {
         //Empty constructor
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public DocumentReference getOwner() {
@@ -64,5 +80,13 @@ public class Chatroom {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public DocumentReference getLatest_message() {
+        return latest_message;
+    }
+
+    public void setLatest_message(DocumentReference latest_message) {
+        this.latest_message = latest_message;
     }
 }

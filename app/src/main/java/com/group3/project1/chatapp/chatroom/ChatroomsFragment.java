@@ -13,14 +13,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.group3.project1.chatapp.user.LoginFragment;
 import com.group3.project1.chatapp.R;
 import com.group3.project1.chatapp.models.Chatroom;
-import com.group3.project1.chatapp.models.ChatroomSummary;
 import com.group3.project1.chatapp.models.User;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class ChatroomsFragment extends Fragment {
 
 
     IListener mListener;
-    ArrayList<ChatroomSummary> summaryList = new ArrayList<>();
+    ArrayList<Chatroom> chatroomList = new ArrayList<>();
     ChatroomsRecyclerAdapter chatroomsAdapter;
 
     // set at successful login
@@ -40,6 +39,7 @@ public class ChatroomsFragment extends Fragment {
         public void signOut();
         public void navCreateChatroom(Chatroom chatroom);
         public void settings(User user);
+        public void navChatroom(Chatroom chatroom);
     }
 
     public ChatroomsFragment() {
@@ -80,7 +80,7 @@ public class ChatroomsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chatrooms, container, false);
         getActivity().setTitle("Chatrooms");
-        summaryList.clear();
+        chatroomList.clear();
         setUser();
         setupRecyclerView(view);
         loadChatrooms(view);
@@ -91,6 +91,8 @@ public class ChatroomsFragment extends Fragment {
         return view;
     }
 
+
+
     private void setupRecyclerView(View view) {
         RecyclerView chatroomsRecycleView = view.findViewById(R.id.chatrooms_recycle_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -98,7 +100,7 @@ public class ChatroomsFragment extends Fragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
                 layoutManager.getOrientation());
         chatroomsRecycleView.addItemDecoration(dividerItemDecoration);
-        chatroomsAdapter = new ChatroomsRecyclerAdapter(getContext(), summaryList);
+        chatroomsAdapter = new ChatroomsRecyclerAdapter(getContext(), chatroomList, mListener);
         chatroomsRecycleView.setAdapter(chatroomsAdapter);
     }
 
@@ -113,13 +115,15 @@ public class ChatroomsFragment extends Fragment {
                             (String) map.get("image_location"),
                             (Boolean) map.get("is_deleted"),
                             (String) map.get("name"),
-                            (DocumentReference) map.get("owner")
+                            (DocumentReference) map.get("owner"),
+                            (DocumentReference) map.get("latest_message"),
+                            (String) documentSnapshot.getId()
                     );
                 } catch (Exception e) {
                     Log.e("ERROR", "loadChatrooms: ", e);
                 }
 
-                summaryList.add(new ChatroomSummary(chatroom.getName(), ""));
+                chatroomList.add(chatroom);
             }
             chatroomsAdapter.notifyDataSetChanged();
         });

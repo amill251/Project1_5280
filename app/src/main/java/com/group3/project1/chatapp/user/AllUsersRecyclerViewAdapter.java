@@ -1,4 +1,4 @@
-package com.group3.project1.chatapp;
+package com.group3.project1.chatapp.user;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.group3.project1.chatapp.R;
 import com.group3.project1.chatapp.models.User;
 import java.util.ArrayList;
 

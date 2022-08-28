@@ -1,7 +1,6 @@
-package com.group3.project1.chatapp;
+package com.group3.project1.chatapp.user;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,10 +14,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.group3.project1.chatapp.R;
 
 
 public class LoginFragment extends Fragment {
@@ -29,7 +26,7 @@ public class LoginFragment extends Fragment {
     }
 
     IListener mListener;
-    interface IListener {
+    public interface IListener {
         public void signup();
         public void loginSuccess();
     }

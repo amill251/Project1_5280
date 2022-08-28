@@ -1,4 +1,4 @@
-package com.group3.project1.chatapp;
+package com.group3.project1.chatapp.user;
 
 import android.os.Bundle;
 
@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.group3.project1.chatapp.R;
 
 
 public class SignupFragment extends Fragment {
@@ -34,7 +35,7 @@ public class SignupFragment extends Fragment {
     }
 
     IListener mListener;
-    interface IListener {
+    public interface IListener {
         public void registerCancelled();
         public void loginSuccess();
     }

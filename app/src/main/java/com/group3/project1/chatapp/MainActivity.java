@@ -5,17 +5,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.internal.StorageReferenceUri;
+import com.group3.project1.chatapp.chatroom.AllChatroomsFragment;
+import com.group3.project1.chatapp.chatroom.ChatroomsFragment;
+import com.group3.project1.chatapp.chatroom.CreateChatroomFragment;
 import com.group3.project1.chatapp.models.Chatroom;
-import com.group3.project1.chatapp.models.ChatroomSummary;
 import com.group3.project1.chatapp.models.ChatroomUser;
 import com.group3.project1.chatapp.models.User;
+import com.group3.project1.chatapp.user.AllUsersFragment;
+import com.group3.project1.chatapp.user.LoginFragment;
+import com.group3.project1.chatapp.user.SignupFragment;
+import com.group3.project1.chatapp.user.UserProfileFragment;
 
 public class MainActivity extends AppCompatActivity implements
         LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener, SearchFragment.IListener, AllUsersFragment.IListener, CreateChatroomFragment.IListener {

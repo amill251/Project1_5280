@@ -1,4 +1,4 @@
-package com.group3.project1.chatapp;
+package com.group3.project1.chatapp.chatroom;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.group3.project1.chatapp.R;
 import com.group3.project1.chatapp.models.Chatroom;
-import com.group3.project1.chatapp.models.User;
 
 public class CreateChatroomFragment extends Fragment {
 
@@ -66,7 +66,7 @@ public class CreateChatroomFragment extends Fragment {
         );
     }
 
-    interface IListener {
+    public interface IListener {
         public void createChatroom(Chatroom chatroom);
     }
 }

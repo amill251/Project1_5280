@@ -103,7 +103,7 @@
         app:layout_constraintTop_toBottomOf="@+id/inputCity">
 
         <RadioButton
-            android:id="@+id/btnRadioFemale"
+            android:id="@+id/radioBtnUserProfileFemale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Female"
@@ -111,7 +111,7 @@
             tools:layout_editor_absoluteY="296dp" />
 
         <RadioButton
-            android:id="@+id/radioBtnMale"
+            android:id="@+id/radioBtnUserProfileMale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Male"

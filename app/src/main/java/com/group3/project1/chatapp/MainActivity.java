@@ -1,7 +1,6 @@
 package com.group3.project1.chatapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 
@@ -45,6 +44,14 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new LoginFragment(), "LoginFragment")
                 .commit();
+    }
+
+    @Override
+    public void settings(User user) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, UserProfileFragment.newInstance(user), "UserProfileFragment")
+                .commit();
+        getSupportFragmentManager().popBackStack();
     }
 
     @Override

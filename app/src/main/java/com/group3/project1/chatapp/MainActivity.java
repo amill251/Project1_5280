@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.group3.project1.chatapp.chatroom.AllChatroomsFragment;
+import com.group3.project1.chatapp.chatroom.ChatroomFragment;
 import com.group3.project1.chatapp.chatroom.ChatroomsFragment;
 import com.group3.project1.chatapp.chatroom.CreateChatroomFragment;
 import com.group3.project1.chatapp.models.Chatroom;
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void navChatroom(Chatroom chatroom) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerview, new AllChatroomsFragment(), "AllChatroomsFragment")
+                .replace(R.id.containerview, ChatroomFragment.newInstance(chatroom), "ChatroomFragment")
                 .addToBackStack(null)
                 .commit();
     }

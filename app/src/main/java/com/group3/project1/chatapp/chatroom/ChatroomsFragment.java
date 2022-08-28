@@ -56,9 +56,6 @@ public class ChatroomsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
         if (getArguments() != null) {
 
         }
@@ -67,7 +64,6 @@ public class ChatroomsFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
         if (context instanceof ChatroomsFragment.IListener) {
             mListener = (IListener) context;
         } else {

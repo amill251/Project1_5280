@@ -66,15 +66,15 @@ public class AllUsersFragment extends Fragment implements AllUsersRecyclerViewAd
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("users")
-                .orderBy("lastName", Query.Direction.DESCENDING)
+                .orderBy("last_name", Query.Direction.DESCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         users.clear();
 
                         for(QueryDocumentSnapshot document: value) {
-                            //Forum forum = document.toObject(Forum.class)
-                            users.add(new User(document.getString("firstName"), document.getString("lastName"), document.getString("city"), document.getString("gender"), document.getString("profileImageURL")));
+                            User user = document.toObject(User.class);
+                            users.add(user);
                         }
                         adapter.notifyDataSetChanged();
                     }

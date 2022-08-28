@@ -89,6 +89,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void gotoUserProfileDetailsFragment(User user) {
-
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new UserProfileFragment(), "UserProfileFragment")
+                .addToBackStack(null)
+                .commit();
     }
 }

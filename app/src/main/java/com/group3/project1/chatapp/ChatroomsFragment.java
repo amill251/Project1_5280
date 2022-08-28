@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.group3.project1.chatapp.models.ChatroomSummary;
+import com.group3.project1.chatapp.models.User;
 
 import java.util.ArrayList;
 
@@ -24,8 +25,12 @@ public class ChatroomsFragment extends Fragment {
     ArrayList<ChatroomSummary> summaryList = new ArrayList<>();
     ChatroomsRecyclerAdapter chatroomsAdapter;
 
+    // set at successful login
+    User user;
+
     interface IListener {
         public void signOut();
+        public void settings(User user);
     }
 
     public ChatroomsFragment() {
@@ -66,6 +71,9 @@ public class ChatroomsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chatrooms, container, false);
         getActivity().setTitle("Chatrooms");
+
+        setUser();
+
         summaryList.add(new ChatroomSummary("Chat group", "latest message"));
         summaryList.add(new ChatroomSummary("Chat group", "latest message"));
         summaryList.add(new ChatroomSummary("Chat group", "latest message"));
@@ -85,10 +93,26 @@ public class ChatroomsFragment extends Fragment {
         chatroomsRecycleView.setAdapter(chatroomsAdapter);
 
         btnSignOut(view);
+        btnSettings(view);
+
         return view;
     }
 
     private void btnSignOut(final View view) {
         view.findViewById(R.id.btnSignOut).setOnClickListener(v -> mListener.signOut());
+    }
+
+    private void btnSettings(final View view) {
+        view.findViewById(R.id.imageSettings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.settings(user);
+            }
+        });
+    }
+
+    private void setUser() {
+        // TODO: get user from DB
+        user = new User("fName", "lName", "city", "Female", "testimage.jpg");
     }
 }

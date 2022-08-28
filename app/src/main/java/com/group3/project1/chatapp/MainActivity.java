@@ -3,8 +3,18 @@ package com.group3.project1.chatapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.internal.StorageReferenceUri;
+import com.group3.project1.chatapp.models.Chatroom;
+import com.group3.project1.chatapp.models.ChatroomSummary;
+import com.group3.project1.chatapp.models.ChatroomUser;
 import com.group3.project1.chatapp.models.User;
 
 public class MainActivity extends AppCompatActivity implements
@@ -44,6 +54,21 @@ public class MainActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new LoginFragment(), "LoginFragment")
                 .commit();
+    }
+
+    @Override
+    public void createChatroom(Chatroom newChatroom) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        newChatroom.setOwner(db.collection("users").document(mAuth.getCurrentUser().getUid()));
+        db.collection("chatrooms")
+                .add(newChatroom)
+                .addOnSuccessListener(documentReference -> {
+                    documentReference.collection("chatroom_users").add(new ChatroomUser(newChatroom.getOwner()));
+                    // getSupportFragmentManager().popBackStack();
+                })
+                .addOnFailureListener(documentReference -> {
+                    Toast.makeText(this, documentReference.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     @Override

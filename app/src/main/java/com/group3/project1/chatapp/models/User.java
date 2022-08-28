@@ -18,6 +18,7 @@ public class User implements Serializable {
         this.lastName = lastName;
         this.city = city;
         this.gender = gender;
+        this.profileImageURL = profileImageURL;
     }
 
     public String getFirstName() {

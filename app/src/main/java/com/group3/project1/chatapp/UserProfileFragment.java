@@ -1,17 +1,28 @@
 package com.group3.project1.chatapp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.group3.project1.chatapp.models.User;
 
 /**
@@ -22,6 +33,8 @@ import com.group3.project1.chatapp.models.User;
 public class UserProfileFragment extends Fragment {
 
     private static final String USER = "USER";
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
 
     User user;
 
@@ -68,6 +81,23 @@ public class UserProfileFragment extends Fragment {
             RadioButton btn = view.findViewById(R.id.radioBtnUserProfileMale);
             btn.setChecked(true);
         }
+
+        ImageView imageView = view.findViewById(R.id.imageUserProfile);
+        StorageReference imagesRef = storageRef.child(user.getProfileImageURL());
+        final long ONE_MEGABYTE = 1024 * 1024;
+        imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                imageView.setImageBitmap(bmp);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("myapp", "No Such file or Path found!!");
+            }
+        });
 
         return view;
     }

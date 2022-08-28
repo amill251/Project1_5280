@@ -113,6 +113,6 @@ public class ChatroomsFragment extends Fragment {
 
     private void setUser() {
         // TODO: get user from DB
-        user = new User("fName", "lName", "city", "Female", "url");
+        user = new User("fName", "lName", "city", "Female", "testimage.jpg");
     }
 }

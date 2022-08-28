@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements
             getSupportFragmentManager().popBackStack();
         }
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerview, new SearchFragment(), "ChatroomsFragment")
+                .replace(R.id.containerview, new ChatroomsFragment(), "ChatroomsFragment")
 
                 .commit();
     }

@@ -20,29 +20,27 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.group3.project1.chatapp.databinding.FragmentAllUsersBinding;
-import com.group3.project1.chatapp.models.User;
+import com.group3.project1.chatapp.databinding.FragmentAllChatroomsBinding;
+import com.group3.project1.chatapp.models.Chatroom;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-
-public class AllUsersFragment extends Fragment implements AllUsersRecyclerViewAdapter.IUsersRecycler {
-    FragmentAllUsersBinding binding;
+public class AllChatroomsFragment extends Fragment {
+    FragmentAllChatroomsBinding binding;
     FirebaseAuth mAuth;
-    ArrayList<User> users = new ArrayList<>();
+    ArrayList<Chatroom> chatrooms = new ArrayList<>();
     LinearLayoutManager layoutManager;
-    AllUsersRecyclerViewAdapter adapter;
+    AllChatroomsRecyclerViewAdapter adapter;
 
-    public AllUsersFragment() {
+    public AllChatroomsFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentAllUsersBinding.inflate(inflater, container, false);
-        getActivity().setTitle("All Users");
+        binding = FragmentAllChatroomsBinding.inflate(inflater, container, false);
+        getActivity().setTitle("All Chatrooms");
 
         layoutManager = new LinearLayoutManager(getContext());
         binding.recyclerView.setLayoutManager(layoutManager);
@@ -50,7 +48,7 @@ public class AllUsersFragment extends Fragment implements AllUsersRecyclerViewAd
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(binding.recyclerView.getContext(), layoutManager.getOrientation());
         binding.recyclerView.addItemDecoration(mDividerItemDecoration);
 
-        adapter = new AllUsersRecyclerViewAdapter(users, this);
+        adapter = new AllChatroomsRecyclerViewAdapter(chatrooms);
         binding.recyclerView.setAdapter(adapter);
 
         return binding.getRoot();
@@ -65,36 +63,20 @@ public class AllUsersFragment extends Fragment implements AllUsersRecyclerViewAd
     private void getUsers() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("users")
-                .orderBy("last_name", Query.Direction.DESCENDING)
+        db.collection("chatrooms")
+                .orderBy("name", Query.Direction.DESCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        users.clear();
+                        chatrooms.clear();
 
                         for(QueryDocumentSnapshot document: value) {
-                            User user = document.toObject(User.class);
-                            users.add(user);
+                            //Chatroom chatroom = document.toObject(Chatroom.class);
+                            chatrooms.add(new Chatroom(document.getString("image_location"), document.getString("name")));
                         }
                         adapter.notifyDataSetChanged();
                     }
                 });
     }
 
-    @Override
-    public void gotoUserProfileDetailsFragment(User user) {
-        mListener.gotoUserProfileDetailsFragment(user);
-    }
-
-    IListener mListener;
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        mListener = (IListener) context;
-    }
-
-    interface IListener {
-        void gotoUserProfileDetailsFragment(User user);
-    }
 }

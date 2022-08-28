@@ -10,6 +10,7 @@
         android:id="@+id/imageViewUserProfile"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:contentDescription="@string/imageViewUserProfile"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
@@ -19,7 +20,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="First Last"
+        android:text="@string/textViewUserName"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewUserProfile"

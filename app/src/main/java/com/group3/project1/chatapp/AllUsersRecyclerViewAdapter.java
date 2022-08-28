@@ -38,7 +38,7 @@ public class AllUsersRecyclerViewAdapter extends RecyclerView.Adapter<AllUsersRe
         holder.user = user;
 
         holder.imageViewUserProfile.setImageResource(R.drawable.ic_launcher_background);
-        holder.textViewUserName.setText(user.getFirstName() + " " + user.getLastName());
+        holder.textViewUserName.setText(user.getFirst_name() + " " + user.getLast_name());
     }
 
     @Override

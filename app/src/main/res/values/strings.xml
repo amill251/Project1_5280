@@ -2,4 +2,11 @@
     <string name="app_name">ChatApp</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="textViewSearchOption">Search Option</string>
+    <string name="rowIcon">row icon</string>
+    <string name="textViewChatroomName">Chatroom Name</string>
+    <string name="imageViewUserProfile">Profile Image</string>
+    <string name="textViewUserName">First Last</string>
+    <string name="imageViewChatroom">Chatroom Image</string>
+    <string name="bookmarkIcon">Bookmark Icon</string>
 </resources>

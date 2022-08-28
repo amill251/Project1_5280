@@ -1,6 +1,7 @@
 package com.group3.project1.chatapp;
 
 import android.content.Context;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,12 @@ public class SearchAdapter extends ArrayAdapter<String> {
         SearchRowItemBinding binding = (SearchRowItemBinding) convertView.getTag();
 
         binding.textViewSearchOption.setText(option);
-        //binding.imageViewSearchOption.setImageDrawable();
+
+        if(position == 0) {
+            binding.imageViewSearchOption.setImageResource(R.drawable.ic_baseline_group_24);
+        } else if (position == 1) {
+            binding.imageViewSearchOption.setImageResource(R.drawable.ic_baseline_chat_bubble_24);
+        }
 
         return convertView;
     }

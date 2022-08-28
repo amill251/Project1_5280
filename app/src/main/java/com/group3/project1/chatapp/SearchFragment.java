@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +48,11 @@ public class SearchFragment extends Fragment {
         binding.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                mListener.gotoAllUsersFragment();
+                if(position == 0) {
+                    mListener.gotoAllUsersFragment();
+                } else if(position == 1) {
+                    mListener.gotoAllChatroomsFragment();
+                }
             }
         });
     }
@@ -67,5 +72,6 @@ public class SearchFragment extends Fragment {
 
     public interface IListener {
         void gotoAllUsersFragment();
+        void gotoAllChatroomsFragment();
     }
 }

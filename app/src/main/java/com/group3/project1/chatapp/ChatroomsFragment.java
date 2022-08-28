@@ -31,7 +31,7 @@ public class ChatroomsFragment extends Fragment {
 
     interface IListener {
         public void signOut();
-        public void createChatroom(Chatroom chatroom);
+        public void navCreateChatroom(Chatroom chatroom);
         public void settings(User user);
     }
 
@@ -86,7 +86,7 @@ public class ChatroomsFragment extends Fragment {
         chatroomsRecycleView.setAdapter(chatroomsAdapter);
 
         btnSignOut(view);
-        btnCreateChatroom(view);
+        btnNavCreateChatroom(view);
         btnSettings(view);
 
         return view;
@@ -96,8 +96,8 @@ public class ChatroomsFragment extends Fragment {
         view.findViewById(R.id.btnSignOut).setOnClickListener(v -> mListener.signOut());
     }
 
-    private void btnCreateChatroom(final View view) {
-        view.findViewById(R.id.btnCreateGroup).setOnClickListener(v -> mListener.createChatroom(new Chatroom("Chatroom test")));
+    private void btnNavCreateChatroom(final View view) {
+        view.findViewById(R.id.btnCreateGroup).setOnClickListener(v -> mListener.navCreateChatroom(new Chatroom("Chatroom test")));
     }
 
     private void btnSettings(final View view) {

@@ -18,7 +18,7 @@ import com.group3.project1.chatapp.models.ChatroomUser;
 import com.group3.project1.chatapp.models.User;
 
 public class MainActivity extends AppCompatActivity implements
-        LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener, SearchFragment.IListener, AllUsersFragment.IListener {
+        LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener, SearchFragment.IListener, AllUsersFragment.IListener, CreateChatroomFragment.IListener {
 
     private FirebaseAuth mAuth;
 
@@ -57,6 +57,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void navCreateChatroom(Chatroom chatroom) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new CreateChatroomFragment(), "CreateChatroom")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
     public void createChatroom(Chatroom newChatroom) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         newChatroom.setOwner(db.collection("users").document(mAuth.getCurrentUser().getUid()));
@@ -64,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements
                 .add(newChatroom)
                 .addOnSuccessListener(documentReference -> {
                     documentReference.collection("chatroom_users").add(new ChatroomUser(newChatroom.getOwner()));
-                    // getSupportFragmentManager().popBackStack();
+                     getSupportFragmentManager().popBackStack();
                 })
                 .addOnFailureListener(documentReference -> {
                     Toast.makeText(this, documentReference.getMessage(), Toast.LENGTH_SHORT).show();

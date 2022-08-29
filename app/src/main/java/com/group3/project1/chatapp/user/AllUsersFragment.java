@@ -65,7 +65,7 @@ public class AllUsersFragment extends Fragment implements AllUsersRecyclerViewAd
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("users")
-                .orderBy("last_name", Query.Direction.DESCENDING)
+                .orderBy("last_name", Query.Direction.ASCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

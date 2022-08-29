@@ -1,10 +1,13 @@
 package com.group3.project1.chatapp.user;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -14,20 +17,25 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.group3.project1.chatapp.R;
+import com.group3.project1.chatapp.databinding.FragmentUserProfileBinding;
 import com.group3.project1.chatapp.models.User;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UserProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class UserProfileFragment extends Fragment {
+    FragmentUserProfileBinding binding;
 
     private static final String USER = "USER";
     FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -36,7 +44,7 @@ public class UserProfileFragment extends Fragment {
     User user;
 
     public UserProfileFragment() {
-        // Required empty public constructor
+        //empty
     }
 
     public static UserProfileFragment newInstance(User user) {
@@ -58,44 +66,103 @@ public class UserProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        binding = FragmentUserProfileBinding.inflate(inflater, container, false);
+
         getActivity().setTitle("Profile");
 
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
+        binding.inputUserProfileFirstName.setText(user.getFirst_name());
+        binding.inputUserProfileLastName.setText(user.getLast_name());
+        binding.inputUserProfileCity.setText(user.getCity());
 
-        TextView fName = view.findViewById(R.id.inputUserProfileFirstName);
-        TextView lName = view.findViewById(R.id.inputUserProfileLastName);
-        TextView city = view.findViewById(R.id.inputUserProfileCity);
-
-        fName.setText(user.getFirst_name());
-        lName.setText(user.getLast_name());
-        city.setText(user.getCity());
-
-        if (User.FEMALE.equalsIgnoreCase(user.getGender())) {
-            RadioButton btn = view.findViewById(R.id.radioBtnUserProfileFemale);
-            btn.setChecked(true);
-        } else if (User.MALE.equalsIgnoreCase(user.getGender())) {
-            RadioButton btn = view.findViewById(R.id.radioBtnUserProfileMale);
-            btn.setChecked(true);
+        if (User.FEMALE.equals(user.getGender())) {
+            binding.radioBtnUserProfileFemale.setChecked(true);
+        } else if (User.MALE.equals(user.getGender())) {
+            binding.radioBtnUserProfileMale.setChecked(true);
         }
 
-        ImageView imageView = view.findViewById(R.id.imageUserProfile);
-        StorageReference imagesRef = storageRef.child(user.getImage_location());
-        final long ONE_MEGABYTE = 1024 * 1024;
-        imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                imageView.setImageBitmap(bmp);
+//        StorageReference imagesRef = storageRef.child(user.getImage_location());
+//        final long ONE_MEGABYTE = 1024 * 1024;
+//        imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+//            @Override
+//            public void onSuccess(byte[] bytes) {
+//                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                binding.imageUserProfile.setImageBitmap(bmp);
+//
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                Log.d("myapp", "No Such file or Path found!!");
+//            }
+//        });
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        binding.btnUserProfileSave.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.d("myapp", "No Such file or Path found!!");
+            public void onClick(View v) {
+                final String[] error = new String[1];
+
+                String firstName = binding.inputUserProfileFirstName.getText().toString();
+                String lastName = binding.inputUserProfileLastName.getText().toString();
+                String city = binding.inputUserProfileCity.getText().toString();
+
+                int selectedRadioButton = binding.radioGroup.getCheckedRadioButtonId();
+                RadioButton radioButton = binding.radioGroup.findViewById(selectedRadioButton);
+
+                String gender = "";
+
+                if (radioButton == binding.radioBtnUserProfileMale) {
+                    gender = User.MALE;
+                } else if (radioButton == binding.radioBtnUserProfileFemale) {
+                    gender = User.FEMALE;
+                }
+
+                if (firstName.isEmpty()) {
+                    Toast.makeText(getActivity(), "First name is required", Toast.LENGTH_LONG).show();
+                    error[0] = "First name is required";
+                    showAlert(error[0]);
+                } else if (lastName.isEmpty()) {
+                    Toast.makeText(getActivity(), "Last name is required", Toast.LENGTH_LONG).show();
+                    error[0] = "Last name is required";
+                    showAlert(error[0]);
+                } else if (city.isEmpty()) {
+                    Toast.makeText(getActivity(), "City is required", Toast.LENGTH_LONG).show();
+                    error[0] = "City is required";
+                    showAlert(error[0]);
+                } else if (gender.isEmpty()) {
+                    Toast.makeText(getActivity(), "Please select a gender", Toast.LENGTH_LONG).show();
+                    error[0] = "No gender selected";
+                    showAlert(error[0]);
+                } else {
+                    FirebaseAuth mAuthLocal = FirebaseAuth.getInstance();
+                    String finalGender = gender;
+                    User newUser = new User(user.getEmail(), firstName, lastName, city, finalGender);
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("users").document(mAuthLocal.getUid())
+                            .set(newUser);
+                }
             }
         });
+    }
 
-        return view;
+    private void showAlert(String error) {
+        if (error != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Error")
+                    .setMessage(error)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }).show();
+        }
     }
 }

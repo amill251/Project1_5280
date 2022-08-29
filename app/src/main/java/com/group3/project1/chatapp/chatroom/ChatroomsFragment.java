@@ -15,7 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.group3.project1.chatapp.R;
@@ -31,6 +35,8 @@ public class ChatroomsFragment extends Fragment {
     IListener mListener;
     ArrayList<Chatroom> chatroomList = new ArrayList<>();
     ChatroomsRecyclerAdapter chatroomsAdapter;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth;
 
     // set at successful login
     User user;
@@ -143,7 +149,18 @@ public class ChatroomsFragment extends Fragment {
     }
 
     private void setUser() {
-        // TODO: get user from DB
-        //user = new User("fName", "lName", "city", "Female", "testimage.jpg");
+        mAuth = FirebaseAuth.getInstance();
+        DocumentReference docRef = db.collection("users").document(mAuth.getCurrentUser().getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    user = new User(document.getString("email"), document.getString("first_name"), document.getString("last_name"), document.getString("city"), document.getString("gender"));
+                } else {
+                    Log.d("TAG", "get failed with ", task.getException());
+                }
+            }
+        });
     }
 }

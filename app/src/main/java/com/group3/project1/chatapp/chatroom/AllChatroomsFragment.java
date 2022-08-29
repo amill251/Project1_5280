@@ -63,7 +63,7 @@ public class AllChatroomsFragment extends Fragment {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("chatrooms")
-                .orderBy("name", Query.Direction.DESCENDING)
+                .orderBy("name", Query.Direction.ASCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

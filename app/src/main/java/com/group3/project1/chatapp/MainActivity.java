@@ -85,8 +85,9 @@ public class MainActivity extends AppCompatActivity implements
     public void settings(User user) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, UserProfileFragment.newInstance(user), "UserProfileFragment")
+                .addToBackStack(null)
                 .commit();
-        getSupportFragmentManager().popBackStack();
+        //getSupportFragmentManager().popBackStack();
     }
 
     @Override
@@ -110,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new ChatroomsFragment(), "ChatroomsFragment")
-
                 .commit();
     }
 
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void gotoUserProfileDetailsFragment(User user) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerview, new UserProfileFragment(), "UserProfileFragment")
+                .replace(R.id.containerview, UserProfileFragment.newInstance(user), "UserProfileFragment")
                 .addToBackStack(null)
                 .commit();
     }

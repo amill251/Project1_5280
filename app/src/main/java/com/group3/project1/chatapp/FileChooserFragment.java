@@ -33,8 +33,8 @@ public class FileChooserFragment extends Fragment {
 
     IListener mListener;
     interface IListener {
-        public void profileImageSaved(String localPathToImage);
-        public void profileImageCancel();
+        public void onClickProfileImageSave(String localPathToImage);
+        public void onClickProfileImageCancel();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class FileChooserFragment extends Fragment {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.profileImageCancel();
+                mListener.onClickProfileImageCancel();
             }
         });
 
@@ -79,7 +79,7 @@ public class FileChooserFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (editTextPath != null && editTextPath.getText() != null)
-                    mListener.profileImageSaved(editTextPath.getText().toString());
+                    mListener.onClickProfileImageSave(editTextPath.getText().toString());
             }
         });
 

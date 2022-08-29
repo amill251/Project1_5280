@@ -6,7 +6,7 @@ import com.google.firebase.firestore.DocumentReference;
 
 public class Message {
     String image_location;
-    Boolean is_deleted;
+    Boolean is_deleted = false;
     String text;
     Timestamp time_created;
     DocumentReference user_id;

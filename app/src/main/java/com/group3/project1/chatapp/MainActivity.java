@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void profileImageSaved(String imageLocalPath) {
+    public void onClickProfileImageSave(String imageLocalPath) {
         StorageReference reference = null;
         if (imageLocalPath != null) {
             reference = storageReference.child(UUID.randomUUID().toString());
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void profileImageCancel() {
+    public void onClickProfileImageCancel() {
         UserProfileFragment fragment = (UserProfileFragment) getSupportFragmentManager().findFragmentByTag("UserProfileFragment");
         getSupportFragmentManager().popBackStack();
     }

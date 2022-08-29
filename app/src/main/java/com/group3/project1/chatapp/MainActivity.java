@@ -1,16 +1,23 @@
 package com.group3.project1.chatapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.group3.project1.chatapp.chatroom.AllChatroomsFragment;
 import com.group3.project1.chatapp.chatroom.ChatroomFragment;
 import com.group3.project1.chatapp.chatroom.ChatroomsFragment;
@@ -162,21 +169,44 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClickProfileImageSave(String imageLocalPath) {
-        StorageReference reference = null;
+        final StorageReference[] references = new StorageReference[1];
         if (imageLocalPath != null) {
-            reference = storageReference.child(UUID.randomUUID().toString());
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Saving image...");
+            progressDialog.show();
+
+            references[0] = storageReference.child(UUID.randomUUID().toString());
             Bitmap image = BitmapFactory.decodeFile(imageLocalPath);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             image.compress(Bitmap.CompressFormat.JPEG,80,stream);
             byte[] byteArray = stream.toByteArray();
-            reference.putBytes(byteArray);
+            references[0].putBytes(byteArray).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.d("myapp", "image saved successfully");
+                    progressDialog.dismiss();
+
+                    UserProfileFragment fragment = (UserProfileFragment) getSupportFragmentManager().findFragmentByTag("UserProfileFragment");
+                    if (references[0] != null)
+                        fragment.updateProfileImage(references[0].getPath());
+
+                    getSupportFragmentManager().popBackStack();
+                }
+            })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("myapp", "image save failed");
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                            double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                            progressDialog.setMessage("Saved " + (int) progress + "%");
+                        }
+                    });
         }
-
-        UserProfileFragment fragment = (UserProfileFragment) getSupportFragmentManager().findFragmentByTag("UserProfileFragment");
-        if (reference != null)
-            fragment.updateProfileImage(reference.getPath());
-
-        getSupportFragmentManager().popBackStack();
     }
 
     @Override

@@ -170,7 +170,9 @@ public class ChatroomsFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    user = new User(document.getString("email"), document.getString("first_name"), document.getString("last_name"), document.getString("city"), document.getString("gender"));
+                    user = new User(document.getString("email"), document.getString("first_name"),
+                            document.getString("last_name"), document.getString("city"),
+                            document.getString("gender"), document.getString("image_location"));
                 } else {
                     Log.d("TAG", "get failed with ", task.getException());
                 }

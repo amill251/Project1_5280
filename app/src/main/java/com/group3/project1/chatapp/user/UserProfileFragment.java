@@ -147,8 +147,7 @@ public class UserProfileFragment extends Fragment {
                 } else {
                     FirebaseAuth mAuthLocal = FirebaseAuth.getInstance();
                     String finalGender = gender;
-                    User newUser = new User(user.getEmail(), firstName, lastName, city, finalGender);
-                    newUser.setImage_location(user.getImage_location());
+                    User newUser = new User(user.getEmail(), firstName, lastName, city, finalGender, user.getImage_location());
 
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     db.collection("users").document(mAuthLocal.getUid())

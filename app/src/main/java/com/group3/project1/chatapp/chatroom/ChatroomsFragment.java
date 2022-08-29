@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -35,7 +37,7 @@ public class ChatroomsFragment extends Fragment {
     IListener mListener;
     ArrayList<Chatroom> chatroomList = new ArrayList<>();
     ChatroomsRecyclerAdapter chatroomsAdapter;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
     // set at successful login
@@ -46,6 +48,7 @@ public class ChatroomsFragment extends Fragment {
         public void navCreateChatroom(Chatroom chatroom);
         public void settings(User user);
         public void navChatroom(Chatroom chatroom);
+        public void navAllChatrooms();
     }
 
     public ChatroomsFragment() {
@@ -62,6 +65,8 @@ public class ChatroomsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         if (getArguments() != null) {
 
         }
@@ -88,6 +93,7 @@ public class ChatroomsFragment extends Fragment {
         loadChatrooms(view);
         btnSignOut(view);
         btnNavCreateChatroom(view);
+        btnNavAllChatrooms(view);
         btnSettings(view);
 
         return view;
@@ -107,28 +113,33 @@ public class ChatroomsFragment extends Fragment {
     }
 
     private void loadChatrooms(View view) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("chatrooms").addSnapshotListener((value, error) -> {
-            for(QueryDocumentSnapshot documentSnapshot: value) {
-                Map map = documentSnapshot.getData();
-                Chatroom chatroom = null;
-                try {
-                    chatroom = new Chatroom(
-                            (String) map.get("image_location"),
-                            (Boolean) map.get("is_deleted"),
-                            (String) map.get("name"),
-                            (DocumentReference) map.get("owner"),
-                            (DocumentReference) map.get("latest_message"),
-                            (String) documentSnapshot.getId()
-                    );
-                } catch (Exception e) {
-                    Log.e("ERROR", "loadChatrooms: ", e);
-                }
 
-                chatroomList.add(chatroom);
-            }
-            chatroomsAdapter.notifyDataSetChanged();
-        });
+        db.collection("chatroom_users")
+                .whereEqualTo("user", db.collection("users").document(mAuth.getUid()))
+                .addSnapshotListener((value, error) -> {
+                    for(QueryDocumentSnapshot documentSnapshot: value) {
+                        ((DocumentReference)documentSnapshot.get("chatroom"))
+                                .addSnapshotListener((documentSnapshotChatroom, error2) -> {
+                                    Map map = documentSnapshotChatroom.getData();
+                                    Chatroom chatroom = null;
+                                    try {
+                                        chatroom = new Chatroom(
+                                                (String) map.get("image_location"),
+                                                (Boolean) map.get("is_deleted"),
+                                                (String) map.get("name"),
+                                                (DocumentReference) map.get("owner"),
+                                                (DocumentReference) map.get("latest_message"),
+                                                (String) documentSnapshotChatroom.getId()
+                                        );
+                                    } catch (Exception e) {
+                                        Log.e("ERROR", "loadChatrooms: ", e);
+                                    }
+                                    chatroomList.add(chatroom);
+                                    chatroomsAdapter.notifyDataSetChanged();
+                                });
+
+                    }
+                });
     }
 
     private void btnSignOut(final View view) {
@@ -137,6 +148,10 @@ public class ChatroomsFragment extends Fragment {
 
     private void btnNavCreateChatroom(final View view) {
         view.findViewById(R.id.btnCreateGroup).setOnClickListener(v -> mListener.navCreateChatroom(new Chatroom("Chatroom test")));
+    }
+
+    private void btnNavAllChatrooms(final View view) {
+        view.findViewById(R.id.btnAllChatrooms).setOnClickListener(v -> mListener.navAllChatrooms());
     }
 
     private void btnSettings(final View view) {
@@ -149,7 +164,6 @@ public class ChatroomsFragment extends Fragment {
     }
 
     private void setUser() {
-        mAuth = FirebaseAuth.getInstance();
         DocumentReference docRef = db.collection("users").document(mAuth.getCurrentUser().getUid());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

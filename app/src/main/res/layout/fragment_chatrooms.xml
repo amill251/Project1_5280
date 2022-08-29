@@ -36,9 +36,20 @@
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_margin="12dp"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/btnAllChatrooms"
             app:layout_constraintBottom_toTopOf="@id/btnSignOut"
             android:text="Create Chatroom"/>
+
+        <Button
+            android:id="@+id/btnAllChatrooms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@id/btnCreateGroup"
+            android:layout_margin="12dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btnSignOut"
+            android:text="All Chatrooms"/>
+
 
         <Button
             android:id="@+id/btnSignOut"

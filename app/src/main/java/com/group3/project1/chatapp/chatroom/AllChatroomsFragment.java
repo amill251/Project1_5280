@@ -24,7 +24,7 @@ import com.group3.project1.chatapp.models.Chatroom;
 
 import java.util.ArrayList;
 
-public class AllChatroomsFragment extends Fragment {
+public class  AllChatroomsFragment extends Fragment {
     FragmentAllChatroomsBinding binding;
     FirebaseAuth mAuth;
     ArrayList<Chatroom> chatrooms = new ArrayList<>();

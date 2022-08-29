@@ -2,11 +2,15 @@ package com.group3.project1.chatapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.group3.project1.chatapp.chatroom.AllChatroomsFragment;
 import com.group3.project1.chatapp.chatroom.ChatroomFragment;
 import com.group3.project1.chatapp.chatroom.ChatroomsFragment;
@@ -19,10 +23,17 @@ import com.group3.project1.chatapp.user.LoginFragment;
 import com.group3.project1.chatapp.user.SignupFragment;
 import com.group3.project1.chatapp.user.UserProfileFragment;
 
+import java.io.ByteArrayOutputStream;
+import java.util.UUID;
+
 public class MainActivity extends AppCompatActivity implements
-        LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener, SearchFragment.IListener, AllUsersFragment.IListener, CreateChatroomFragment.IListener {
+        LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener,
+        SearchFragment.IListener, AllUsersFragment.IListener, CreateChatroomFragment.IListener,
+        UserProfileFragment.IListener, FileChooserFragment.IListener {
 
     private FirebaseAuth mAuth;
+    private FirebaseStorage mStorage;
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements
                     .commit();
         } else {
             setContentView(R.layout.activity_main);
+
+            mStorage = FirebaseStorage.getInstance();
+            storageReference = mStorage.getReference();
+
             loginSuccess();
         }
     }
@@ -55,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements
         mAuth.signOut();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new LoginFragment(), "LoginFragment")
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -111,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new ChatroomsFragment(), "ChatroomsFragment")
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -136,5 +153,38 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.containerview, UserProfileFragment.newInstance(user), "UserProfileFragment")
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void chooseProfileImage() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new FileChooserFragment(), "FileChooserFragment")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void profileImageSaved(String imageLocalPath) {
+        StorageReference reference = null;
+        if (imageLocalPath != null) {
+            reference = storageReference.child(UUID.randomUUID().toString());
+            Bitmap image = BitmapFactory.decodeFile(imageLocalPath);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.JPEG,80,stream);
+            byte[] byteArray = stream.toByteArray();
+            reference.putBytes(byteArray);
+        }
+
+        UserProfileFragment fragment = (UserProfileFragment) getSupportFragmentManager().findFragmentByTag("UserProfileFragment");
+        if (reference != null)
+            fragment.updateProfileImage(reference.getPath());
+
+        getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void profileImageCancel() {
+        UserProfileFragment fragment = (UserProfileFragment) getSupportFragmentManager().findFragmentByTag("UserProfileFragment");
+        getSupportFragmentManager().popBackStack();
     }
 }

@@ -27,7 +27,8 @@ public class User implements Serializable {
         is_deleted = false;
     }
 
-    public User(String email, String username, String first_name, String last_name, String city, String gender, String image_location, Boolean is_deleted) {
+    public User(String email, String username, String first_name, String last_name, String city,
+                String gender, String image_location, Boolean is_deleted) {
         this.email = email;
         this.username = username;
         this.first_name = first_name;

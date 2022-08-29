@@ -1,5 +1,6 @@
 package com.group3.project1.chatapp.user;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,6 +44,22 @@ public class UserProfileFragment extends Fragment {
 
     User user;
 
+    IListener mListener;
+    public interface IListener {
+        public void chooseProfileImage();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if (context instanceof IListener) {
+            mListener = (IListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement IListener");
+        }
+    }
+
     public UserProfileFragment() {
         //empty
     }
@@ -80,21 +97,9 @@ public class UserProfileFragment extends Fragment {
             binding.radioBtnUserProfileMale.setChecked(true);
         }
 
-//        StorageReference imagesRef = storageRef.child(user.getImage_location());
-//        final long ONE_MEGABYTE = 1024 * 1024;
-//        imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//            @Override
-//            public void onSuccess(byte[] bytes) {
-//                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//                binding.imageUserProfile.setImageBitmap(bmp);
-//
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                Log.d("myapp", "No Such file or Path found!!");
-//            }
-//        });
+        onProfileImageClick();
+
+        downloadAndSetProfileImage();
 
         return binding.getRoot();
     }
@@ -143,6 +148,7 @@ public class UserProfileFragment extends Fragment {
                     FirebaseAuth mAuthLocal = FirebaseAuth.getInstance();
                     String finalGender = gender;
                     User newUser = new User(user.getEmail(), firstName, lastName, city, finalGender);
+                    newUser.setImage_location(user.getImage_location());
 
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     db.collection("users").document(mAuthLocal.getUid())
@@ -164,5 +170,42 @@ public class UserProfileFragment extends Fragment {
                         }
                     }).show();
         }
+    }
+
+    private void onProfileImageClick() {
+
+
+        ImageView profileImage = binding.imageUserProfile;
+
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.chooseProfileImage();
+            }
+        });
+    }
+
+    private void downloadAndSetProfileImage() {
+        if (user.getImage_location() != null) {
+            StorageReference imagesRef = storageRef.child(user.getImage_location());
+            final long ONE_MEGABYTE = 1024 * 1024;
+            imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    binding.imageUserProfile.setImageBitmap(bmp);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.d("myapp", "No Such file or Path found!!");
+                }
+            });
+        }
+    }
+
+    public void updateProfileImage(String imageLocalPath) {
+        user.setImage_location(imageLocalPath);
     }
 }

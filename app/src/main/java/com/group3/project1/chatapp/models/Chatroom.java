@@ -8,6 +8,7 @@ import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 
 public class Chatroom implements Serializable {
@@ -91,5 +92,18 @@ public class Chatroom implements Serializable {
 
     public void setLatest_message(DocumentReference latest_message) {
         this.latest_message = latest_message;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Chatroom chatroom = (Chatroom) o;
+        return is_deleted.equals(chatroom.is_deleted) && name.equals(chatroom.name) && id.equals(chatroom.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(is_deleted, name, id);
     }
 }

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +30,7 @@ public class LoginFragment extends Fragment {
     public interface IListener {
         public void signup();
         public void loginSuccess();
+        public void forgotPassword();
     }
 
     @Override
@@ -70,6 +72,8 @@ public class LoginFragment extends Fragment {
         btnSignin(view);
 
         btnCreateAccount(view);
+
+        textViewForgotPassword(view);
 
         return view;
     }
@@ -127,4 +131,14 @@ public class LoginFragment extends Fragment {
         }
     }
 
+    private void textViewForgotPassword(View view) {
+        TextView forgotPassword = view.findViewById(R.id.textViewForgotPassword);
+
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.forgotPassword();
+            }
+        });
+    }
 }

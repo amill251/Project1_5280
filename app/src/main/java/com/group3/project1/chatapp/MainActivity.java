@@ -26,6 +26,7 @@ import com.group3.project1.chatapp.models.Chatroom;
 import com.group3.project1.chatapp.models.ChatroomUser;
 import com.group3.project1.chatapp.models.User;
 import com.group3.project1.chatapp.user.AllUsersFragment;
+import com.group3.project1.chatapp.user.ForgotPasswordFragment;
 import com.group3.project1.chatapp.user.LoginFragment;
 import com.group3.project1.chatapp.user.SignupFragment;
 import com.group3.project1.chatapp.user.UserProfileFragment;
@@ -36,7 +37,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity implements
         LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener,
         SearchFragment.IListener, AllUsersFragment.IListener, CreateChatroomFragment.IListener,
-        UserProfileFragment.IListener, FileChooserFragment.IListener {
+        UserProfileFragment.IListener, FileChooserFragment.IListener, ForgotPasswordFragment.IListener {
 
     private FirebaseAuth mAuth;
     private FirebaseStorage mStorage;
@@ -136,6 +137,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void forgotPassword() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new ForgotPasswordFragment(), "ForgotPasswordFragment")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
     public void gotoAllUsersFragment() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new AllUsersFragment(), "AllUsersFragment")
@@ -212,6 +221,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClickProfileImageCancel() {
         UserProfileFragment fragment = (UserProfileFragment) getSupportFragmentManager().findFragmentByTag("UserProfileFragment");
+        getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void resetPasswordSuccess() {
+        LoginFragment fragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag("LoginFragment");
         getSupportFragmentManager().popBackStack();
     }
 }

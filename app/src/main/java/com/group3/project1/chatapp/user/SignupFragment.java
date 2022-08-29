@@ -155,11 +155,11 @@ public class SignupFragment extends Fragment {
                                         User newUser = new User(email, firstName, lastName, city, finalGender);
 
                                         FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                        db.collection("users")
-                                                .add(newUser)
-                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        db.collection("users").document(mAuthLocal.getUid())
+                                                .set(newUser)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
-                                                    public void onSuccess(DocumentReference documentReference) {
+                                                    public void onComplete(@NonNull Task<Void> task) {
                                                         mListener.loginSuccess();
                                                     }
                                                 });

@@ -15,7 +15,7 @@ public class User implements Serializable {
         // empty constructor
     }
 
-    public User(String email, String first_name, String last_name, String city, String gender) {
+    public User(String email, String first_name, String last_name, String city, String gender, String image_location) {
         this.email = email;
         this.first_name = first_name;
         this.last_name = last_name;
@@ -23,7 +23,7 @@ public class User implements Serializable {
         this.gender = gender;
 
         username = String.valueOf(first_name.toLowerCase().charAt(0)) + last_name.toLowerCase();
-        image_location = null;
+        this.image_location = image_location;
         is_deleted = false;
     }
 

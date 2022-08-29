@@ -1,7 +1,9 @@
 package com.group3.project1.chatapp.chatroom;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,15 +16,21 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.group3.project1.chatapp.R;
 import com.group3.project1.chatapp.models.Chatroom;
 import com.group3.project1.chatapp.models.ChatroomUser;
 import com.group3.project1.chatapp.models.Message;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
 
 
@@ -69,13 +77,15 @@ public class ChatroomFragment extends Fragment {
             EditText messageInput = view.findViewById(R.id.message_input);
             Message newMessage = new Message();
             newMessage.setText(messageInput.getText().toString());
+            newMessage.setTime_created(Timestamp.now());
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             newMessage.setUser_id(db.collection("users").document(mAuth.getCurrentUser().getUid()));
             db.collection("chatrooms").document(currentChatroom.getId()).collection("messages")
                     .add(newMessage)
                     .addOnSuccessListener(documentReference -> {
-
+                        db.document("chatrooms/" + currentChatroom.getId()).update("latest_message", documentReference);
+                        messageInput.setText("");
                     })
                     .addOnFailureListener(documentReference -> {
                         Log.e("ERROR", "btnSendMessage: ", documentReference.getCause());
@@ -83,28 +93,22 @@ public class ChatroomFragment extends Fragment {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void loadMessages(View view) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        messagesList.clear();
         db.collection("chatrooms").document(currentChatroom.getId()).collection("messages").addSnapshotListener((value, error) -> {
-            for(QueryDocumentSnapshot documentSnapshot: value) {
-                Message message = documentSnapshot.toObject(Message.class);
-                Map map = documentSnapshot.getData();
-                try {
-//                    message = new Message(
-//                            (String) map.get("image_location"),
-//                            (Boolean) map.get("is_deleted"),
-//                            (String) map.get("name"),
-//                            (DocumentReference) map.get("owner"),
-//                            (DocumentReference) map.get("latest_message"),
-//                            (String) documentSnapshot.getId()
-//                    );
-                } catch (Exception e) {
-                    Log.e("ERROR", "loadChatrooms: ", e);
+            value.getDocumentChanges();
+            for(DocumentChange documentChange: value.getDocumentChanges()) {
+                if(documentChange.getType().equals(DocumentChange.Type.REMOVED)) {
+                    //TODO find message and delete
+                } else if(documentChange.getType().equals(DocumentChange.Type.ADDED)){
+                    Message message = documentChange.getDocument().toObject(Message.class);
+                    messagesList.add(message);
+                } else if(documentChange.getType().equals(DocumentChange.Type.MODIFIED)) {
+                    //TODO check to see what was modified on message
                 }
-
-                messagesList.add(message);
             }
+            messagesList.sort(Comparator.comparing(Message::getTime_created));
             messagesAdapter.notifyDataSetChanged();
         });
     }

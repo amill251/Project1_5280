@@ -39,6 +39,8 @@ public class ChatroomFragment extends Fragment {
     ArrayList<Message> messagesList = new ArrayList<>();
     MessagesRecyclerAdapter messagesAdapter;
     Chatroom currentChatroom;
+    FirebaseFirestore db;
+    FirebaseAuth mAuth;
 
     public ChatroomFragment() {
         // Required empty public constructor
@@ -55,11 +57,14 @@ public class ChatroomFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         if (getArguments() != null) {
             currentChatroom = (Chatroom) getArguments().getSerializable(Chatroom.CURRENT_CHATROOM);
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -68,7 +73,7 @@ public class ChatroomFragment extends Fragment {
         messagesList.clear();
         setupRecyclerView(view);
         btnSendMessage(view);
-        loadMessages(view);
+        loadMessages();
         return view;
     }
 
@@ -78,8 +83,6 @@ public class ChatroomFragment extends Fragment {
             Message newMessage = new Message();
             newMessage.setText(messageInput.getText().toString());
             newMessage.setTime_created(Timestamp.now());
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
             newMessage.setUser_id(db.collection("users").document(mAuth.getCurrentUser().getUid()));
             db.collection("chatrooms").document(currentChatroom.getId()).collection("messages")
                     .add(newMessage)
@@ -94,8 +97,7 @@ public class ChatroomFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void loadMessages(View view) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private void loadMessages() {
         db.collection("chatrooms").document(currentChatroom.getId()).collection("messages").addSnapshotListener((value, error) -> {
             value.getDocumentChanges();
             for(DocumentChange documentChange: value.getDocumentChanges()) {

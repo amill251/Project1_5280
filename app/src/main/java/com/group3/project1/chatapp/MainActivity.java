@@ -67,18 +67,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void createChatroom(Chatroom newChatroom) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        newChatroom.setOwner(db.collection("users").document(mAuth.getCurrentUser().getUid()));
-        db.collection("chatrooms")
-                .add(newChatroom)
-                .addOnSuccessListener(documentReference -> {
-                    documentReference.collection("chatroom_users").add(new ChatroomUser(newChatroom.getOwner()));
-                     getSupportFragmentManager().popBackStack();
-                })
-                .addOnFailureListener(documentReference -> {
-                    Toast.makeText(this, documentReference.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+    public void createChatroom() {
+        getSupportFragmentManager().popBackStack();
     }
 
     @Override
@@ -87,13 +77,20 @@ public class MainActivity extends AppCompatActivity implements
                 .replace(R.id.containerview, UserProfileFragment.newInstance(user), "UserProfileFragment")
                 .addToBackStack(null)
                 .commit();
-        //getSupportFragmentManager().popBackStack();
     }
 
     @Override
     public void navChatroom(Chatroom chatroom) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, ChatroomFragment.newInstance(chatroom), "ChatroomFragment")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void navAllChatrooms() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, new AllChatroomsFragment(), "AllChatroomsFragment")
                 .addToBackStack(null)
                 .commit();
     }

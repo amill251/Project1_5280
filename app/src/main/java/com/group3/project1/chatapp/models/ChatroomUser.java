@@ -4,10 +4,20 @@ import com.google.firebase.firestore.DocumentReference;
 
 public class ChatroomUser {
     DocumentReference user;
+    DocumentReference chatroom;
     Boolean is_viewing = false;
 
-    public ChatroomUser(DocumentReference user) {
+    public ChatroomUser(DocumentReference user, DocumentReference chatroom) {
         this.user = user;
+        this.chatroom = chatroom;
+    }
+
+    public DocumentReference getChatroom() {
+        return chatroom;
+    }
+
+    public void setChatroom(DocumentReference chatroom) {
+        this.chatroom = chatroom;
     }
 
     public DocumentReference getUser() {

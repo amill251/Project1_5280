@@ -2,17 +2,25 @@ package com.group3.project1.chatapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -22,6 +30,7 @@ import com.group3.project1.chatapp.chatroom.AllChatroomsFragment;
 import com.group3.project1.chatapp.chatroom.ChatroomFragment;
 import com.group3.project1.chatapp.chatroom.ChatroomsFragment;
 import com.group3.project1.chatapp.chatroom.CreateChatroomFragment;
+import com.group3.project1.chatapp.databinding.ActivityMainBinding;
 import com.group3.project1.chatapp.models.Chatroom;
 import com.group3.project1.chatapp.models.ChatroomUser;
 import com.group3.project1.chatapp.models.User;
@@ -40,26 +49,75 @@ public class MainActivity extends AppCompatActivity implements
         UserProfileFragment.IListener, FileChooserFragment.IListener, ForgotPasswordFragment.IListener {
 
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private FirebaseStorage mStorage;
     private StorageReference storageReference;
+    ActivityMainBinding binding;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        setContentView(binding.getRoot());
+
         if(mAuth.getCurrentUser() == null) {
-            setContentView(R.layout.activity_main);
+            binding.bottomNavigationView.setVisibility(View.INVISIBLE);
+
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.containerview, new LoginFragment(), "LoginFragment")
                     .commit();
         } else {
-            setContentView(R.layout.activity_main);
-
+            binding.bottomNavigationView.setVisibility(View.VISIBLE);
+            replaceFragment(new ChatroomsFragment());
             mStorage = FirebaseStorage.getInstance();
             storageReference = mStorage.getReference();
 
-            loginSuccess();
+            setUser();
+            //loginSuccess();
         }
+
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.chatroomsFragment:
+                    replaceFragment(new ChatroomsFragment());
+                    break;
+                case R.id.searchFragment:
+                    replaceFragment(new SearchFragment());
+                    break;
+                case R.id.userProfileFragment:
+                    replaceFragment(UserProfileFragment.newInstance(user));
+                    break;
+            }
+
+            return true;
+        });
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.containerview, fragment).commit();
+    }
+
+    private void setUser() {
+        DocumentReference docRef = db.collection("users").document(mAuth.getCurrentUser().getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    user = new User(document.getString("email"), document.getString("first_name"),
+                            document.getString("last_name"), document.getString("city"),
+                            document.getString("gender"), document.getString("image_location"));
+                } else {
+                    Log.d("TAG", "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
     @Override
@@ -76,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements
             getSupportFragmentManager().popBackStack();
         }
         mAuth.signOut();
+        binding.bottomNavigationView.setVisibility(View.INVISIBLE);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new LoginFragment(), "LoginFragment")
                 .addToBackStack(null)
@@ -130,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements
         for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
             getSupportFragmentManager().popBackStack();
         }
+        binding.bottomNavigationView.setVisibility(View.VISIBLE);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new ChatroomsFragment(), "ChatroomsFragment")
                 .addToBackStack(null)

@@ -33,7 +33,6 @@ import java.util.Map;
 
 public class ChatroomsFragment extends Fragment {
 
-
     IListener mListener;
     ArrayList<Chatroom> chatroomList = new ArrayList<>();
     ChatroomsRecyclerAdapter chatroomsAdapter;

@@ -104,6 +104,7 @@ public class ChatroomFragment extends Fragment {
     private void loadMessages() {
         db.collection("chatrooms").document(currentChatroom.getId()).collection("messages").addSnapshotListener((value, error) -> {
             value.getDocumentChanges();
+            boolean snapshotChanged = true;
             for(DocumentChange documentChange: value.getDocumentChanges()) {
                 if(documentChange.getType().equals(DocumentChange.Type.REMOVED)) {
                     //TODO find message and delete
@@ -113,12 +114,16 @@ public class ChatroomFragment extends Fragment {
                     message.setMessageDocumentId(messageId);
                     message.setChatRoomId(currentChatroom.getId());
                     messagesList.add(message);
+                    snapshotChanged = false;
                 } else if(documentChange.getType().equals(DocumentChange.Type.MODIFIED)) {
                     //TODO check to see what was modified on message
                 }
             }
-            messagesList.sort(Comparator.comparing(Message::getTime_created));
-            messagesAdapter.notifyDataSetChanged();
+
+            if (!snapshotChanged) {
+                messagesList.sort(Comparator.comparing(Message::getTime_created));
+                messagesAdapter.notifyDataSetChanged();
+            }
         });
     }
 

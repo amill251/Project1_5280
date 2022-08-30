@@ -1,8 +1,6 @@
 package com.group3.project1.chatapp.chatroom;
 
 import android.content.Context;
-import android.os.Build;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,30 +9,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.group3.project1.chatapp.R;
 import com.group3.project1.chatapp.models.Message;
-import com.group3.project1.chatapp.models.User;
 import com.group3.project1.chatapp.utils.DateUtil;
 import com.group3.project1.chatapp.utils.ImageUtil;
-import com.group3.project1.chatapp.utils.UserUtil;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecyclerAdapter.MessagesViewHolder> {
 
@@ -70,7 +58,7 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         ImageUtil.downloadAndSetImage(currentMsg.getImage_location(),
                 FirebaseStorage.getInstance().getReference(), holder.getMsgOwnerImage());
 
-        onClickLikes(holder.msgLikesImage, position);
+        onClickLikes(holder.msgLikesImage, position, holder, currentMsg);
     }
 
     @Override
@@ -114,6 +102,7 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
             int curNumOfLikes = 0;
             if (this.msgLikes != null && !this.msgLikes.getText().toString().isEmpty())
                 curNumOfLikes = Integer.parseInt(this.msgLikes.getText().toString());
+
             curNumOfLikes += num;
 
             this.msgLikes.setText(curNumOfLikes + "");
@@ -127,6 +116,17 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
 
         public void setMsgOwnerImage(ImageView msgOwnerImage) {this.msgOwnerImage = msgOwnerImage;}
 
+        public void updateLikeUI(int num, Message message) {
+            int curLikes = 0;
+            if (!msgLikes.getText().toString().isEmpty()) {
+                curLikes = Integer.parseInt(msgLikes.getText().toString());
+            }
+
+            curLikes += num;
+            message.setNumberOfLikes(curLikes);
+            updateDBMessage(message);
+            msgLikes.setText(curLikes + "");
+        }
     }
 
     private void setMsgOwnerName(TextView textViewOwnerName, String recordId) {
@@ -152,12 +152,33 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
                 });
     }
 
-    private void onClickLikes(ImageView likes, int position) {
+    private void onClickLikes(ImageView likes, int position, MessagesViewHolder holder, Message message) {
         likes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("myapp", "row " + position + " like clicked");
+
+                Message localMessage = new Message(message);
+                holder.updateLikeUI(1, localMessage);
             }
         });
+    }
+
+    private void updateDBMessage(Message message) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("chatrooms")
+                .document(message.getChatRoomId() + "/messages/" + message.getMessageDocumentId())
+                .set(message)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("myapp", "successfully updated message likes");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("myapp", "failed to update message likes");
+                    }
+                });
     }
 }

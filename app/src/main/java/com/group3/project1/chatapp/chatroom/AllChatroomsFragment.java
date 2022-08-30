@@ -71,7 +71,8 @@ public class  AllChatroomsFragment extends Fragment {
 
                         for(QueryDocumentSnapshot document: value) {
                             //Chatroom chatroom = document.toObject(Chatroom.class);
-                            chatrooms.add(new Chatroom(document.getString("image_location"), document.getString("name")));
+
+                            chatrooms.add(new Chatroom(document.getString("name"), document.getId()));
                         }
                         adapter.notifyDataSetChanged();
                     }

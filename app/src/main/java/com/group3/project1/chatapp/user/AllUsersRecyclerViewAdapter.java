@@ -1,5 +1,8 @@
 package com.group3.project1.chatapp.user;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +11,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.group3.project1.chatapp.R;
 import com.group3.project1.chatapp.models.User;
 import java.util.ArrayList;
@@ -17,6 +25,8 @@ public class AllUsersRecyclerViewAdapter extends RecyclerView.Adapter<AllUsersRe
     ArrayList<User> users;
     IUsersRecycler mListener;
     FirebaseAuth mAuth;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
 
     public AllUsersRecyclerViewAdapter(ArrayList<User> users, IUsersRecycler mListener) {
         this.users = users;
@@ -38,7 +48,26 @@ public class AllUsersRecyclerViewAdapter extends RecyclerView.Adapter<AllUsersRe
         User user = users.get(position);
         holder.user = user;
 
-        holder.imageViewUserProfile.setImageResource(R.drawable.ic_launcher_background);
+        if (user.getImage_location() != null) {
+            StorageReference imagesRef = storageRef.child(user.getImage_location());
+            final long ONE_MEGABYTE = 1024 * 1024;
+            imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    holder.imageViewUserProfile.setImageBitmap(bmp);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.d("myapp", "No Such file or Path found!!");
+                }
+            });
+        } else {
+            holder.imageViewUserProfile.setImageResource(R.drawable.ic_baseline_tag_faces_24);
+        }
+
         holder.textViewUserName.setText(user.getFirst_name() + " " + user.getLast_name());
     }
 

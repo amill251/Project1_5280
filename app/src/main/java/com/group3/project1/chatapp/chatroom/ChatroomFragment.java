@@ -15,10 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,19 +24,13 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.group3.project1.chatapp.R;
 import com.group3.project1.chatapp.models.Chatroom;
-import com.group3.project1.chatapp.models.ChatroomUser;
 import com.group3.project1.chatapp.models.Message;
 import com.group3.project1.chatapp.models.User;
-import com.group3.project1.chatapp.utils.UserUtil;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Map;
 
 
 public class ChatroomFragment extends Fragment {
@@ -117,6 +109,9 @@ public class ChatroomFragment extends Fragment {
                     //TODO find message and delete
                 } else if(documentChange.getType().equals(DocumentChange.Type.ADDED)){
                     Message message = documentChange.getDocument().toObject(Message.class);
+                    String messageId = documentChange.getDocument().getId();
+                    message.setMessageDocumentId(messageId);
+                    message.setChatRoomId(currentChatroom.getId());
                     messagesList.add(message);
                 } else if(documentChange.getType().equals(DocumentChange.Type.MODIFIED)) {
                     //TODO check to see what was modified on message

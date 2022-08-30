@@ -11,7 +11,25 @@ public class Message {
     Timestamp time_created;
     DocumentReference user_id;;
     int numberOfLikes = 0;
+    String messageDocumentId;
+    String chatRoomId;
 
+    public Message() {
+
+    }
+
+    public Message(Message message) {
+        if (message != null) {
+            image_location = message.image_location;
+            is_deleted = message.is_deleted;
+            text = message.text;
+            time_created = message.time_created;
+            user_id = message.user_id;
+            numberOfLikes = message.numberOfLikes;
+            messageDocumentId = message.messageDocumentId;
+            chatRoomId = message.chatRoomId;
+        }
+    }
 
     public String getImage_location() {
         return image_location;
@@ -59,5 +77,21 @@ public class Message {
 
     public void setNumberOfLikes(int numberOfLikes) {
         this.numberOfLikes = numberOfLikes;
+    }
+
+    public String getMessageDocumentId() {
+        return messageDocumentId;
+    }
+
+    public void setMessageDocumentId(String messageDocumentId) {
+        this.messageDocumentId = messageDocumentId;
+    }
+
+    public String getChatRoomId() {
+        return chatRoomId;
+    }
+
+    public void setChatRoomId(String chatRoomId) {
+        this.chatRoomId = chatRoomId;
     }
 }

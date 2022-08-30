@@ -9,7 +9,9 @@ public class Message {
     Boolean is_deleted = false;
     String text;
     Timestamp time_created;
-    DocumentReference user_id;
+    DocumentReference user_id;;
+    int numberOfLikes = 0;
+
 
     public String getImage_location() {
         return image_location;
@@ -49,5 +51,13 @@ public class Message {
 
     public void setUser_id(DocumentReference user_id) {
         this.user_id = user_id;
+    }
+
+    public int getNumberOfLikes() {
+        return numberOfLikes;
+    }
+
+    public void setNumberOfLikes(int numberOfLikes) {
+        this.numberOfLikes = numberOfLikes;
     }
 }

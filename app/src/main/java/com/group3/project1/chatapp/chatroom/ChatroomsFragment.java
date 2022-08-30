@@ -126,7 +126,9 @@ public class ChatroomsFragment extends Fragment {
                                     } catch (Exception e) {
                                         Log.e("ERROR", "loadChatrooms: ", e);
                                     }
-                                    chatroomList.add(chatroom);
+
+                                    if (!chatroomList.contains(chatroom))
+                                        chatroomList.add(chatroom);
                                     chatroomsAdapter.notifyDataSetChanged();
                                 });
 

@@ -8,7 +8,7 @@ public class User implements Serializable {
     public static String FEMALE = "FEMALE";
     public static String MALE = "MALE";
 
-    String email, username, first_name, last_name, city, gender, image_location;
+    String email, username, first_name, last_name, city, gender, image_location, id;
     Boolean is_deleted;
 
     public User() {

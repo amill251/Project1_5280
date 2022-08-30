@@ -21,6 +21,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.group3.project1.chatapp.databinding.FragmentAllChatroomsBinding;
 import com.group3.project1.chatapp.models.Chatroom;
+import com.group3.project1.chatapp.models.User;
 
 import java.util.ArrayList;
 
@@ -56,10 +57,10 @@ public class  AllChatroomsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getUsers();
+        getChatrooms();
     }
 
-    private void getUsers() {
+    private void getChatrooms() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("chatrooms")
@@ -77,5 +78,4 @@ public class  AllChatroomsFragment extends Fragment {
                     }
                 });
     }
-
 }

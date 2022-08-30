@@ -97,9 +97,15 @@ public class MainActivity extends AppCompatActivity implements
 
     private void replaceFragment(Fragment fragment) {
         setUser();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.containerview, fragment).commit();
+
+        String className = fragment.getClass().getName();
+        if (fragment != null && fragment.getClass().getName().contains("UserProfileFragment")){
+            gotoUserProfileDetailsFragment(user);
+        } else  {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.containerview, fragment).commit();
+        }
     }
 
     private void setUser() {
@@ -236,6 +242,12 @@ public class MainActivity extends AppCompatActivity implements
             references[0].putBytes(byteArray).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        Log.d("myapp", "wait failed while uploading image");
+                    }
+
                     Log.d("myapp", "image saved successfully");
                     progressDialog.dismiss();
 

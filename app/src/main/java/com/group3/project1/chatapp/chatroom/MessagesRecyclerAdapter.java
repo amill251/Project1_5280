@@ -58,7 +58,7 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         Message currentMsg = localMessagesList.get(position);
 
         holder.setMessageText(currentMsg.getText());
-        holder.setMsgLikes(currentMsg.getNumberOfLikes() + "");
+        holder.addToLikes(currentMsg.getNumberOfLikes());
 
         // set msg owner name
         setMsgOwnerName(holder.getMsgOwnerName(), currentMsg.getUser_id().getId());
@@ -69,6 +69,8 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         // set the current msg's owner image
         ImageUtil.downloadAndSetImage(currentMsg.getImage_location(),
                 FirebaseStorage.getInstance().getReference(), holder.getMsgOwnerImage());
+
+        onClickLikes(holder.msgLikesImage, position);
     }
 
     @Override
@@ -82,7 +84,7 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         TextView msgLikes;
         TextView msgOwnerName;
         ImageView msgOwnerImage;
-
+        ImageView msgLikesImage;
 
         public MessagesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -91,6 +93,7 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
             msgLikes = itemView.findViewById(R.id.textViewMsgLikes);
             msgOwnerName = itemView.findViewById(R.id.textViewChatMsgOwnerName);
             msgOwnerImage = itemView.findViewById(R.id.imageViewMsgOwner);
+            msgLikesImage = itemView.findViewById(R.id.imageLikes);
         }
 
         public TextView getMessageText() {
@@ -107,7 +110,14 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
 
         public TextView getMsgLikes() {return msgLikes;}
 
-        public void setMsgLikes(String msgLikes) {this.msgLikes.setText(msgLikes);}
+        public void addToLikes(int num) {
+            int curNumOfLikes = 0;
+            if (this.msgLikes != null && !this.msgLikes.getText().toString().isEmpty())
+                curNumOfLikes = Integer.parseInt(this.msgLikes.getText().toString());
+            curNumOfLikes += num;
+
+            this.msgLikes.setText(curNumOfLikes + "");
+        }
 
         public TextView getMsgOwnerName() {return msgOwnerName;}
 
@@ -116,6 +126,7 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         public ImageView getMsgOwnerImage() {return msgOwnerImage;}
 
         public void setMsgOwnerImage(ImageView msgOwnerImage) {this.msgOwnerImage = msgOwnerImage;}
+
     }
 
     private void setMsgOwnerName(TextView textViewOwnerName, String recordId) {
@@ -139,5 +150,14 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
                         Log.d("myapp", "failed to get user record");
                     }
                 });
+    }
+
+    private void onClickLikes(ImageView likes, int position) {
+        likes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("myapp", "row " + position + " like clicked");
+            }
+        });
     }
 }

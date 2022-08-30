@@ -45,9 +45,7 @@ public class ChatroomsFragment extends Fragment {
     public interface IListener {
         public void signOut();
         public void navCreateChatroom(Chatroom chatroom);
-        public void settings(User user);
         public void navChatroom(Chatroom chatroom);
-        public void navAllChatrooms();
     }
 
     public ChatroomsFragment() {
@@ -87,18 +85,13 @@ public class ChatroomsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_chatrooms, container, false);
         getActivity().setTitle("Chatrooms");
         chatroomList.clear();
-        setUser();
         setupRecyclerView(view);
         loadChatrooms(view);
         btnSignOut(view);
         btnNavCreateChatroom(view);
-        btnNavAllChatrooms(view);
-        btnSettings(view);
 
         return view;
     }
-
-
 
     private void setupRecyclerView(View view) {
         RecyclerView chatroomsRecycleView = view.findViewById(R.id.chatrooms_recycle_view);
@@ -142,40 +135,10 @@ public class ChatroomsFragment extends Fragment {
     }
 
     private void btnSignOut(final View view) {
-        view.findViewById(R.id.btnSignOut).setOnClickListener(v -> mListener.signOut());
+        view.findViewById(R.id.imageButtonLogout).setOnClickListener(v -> mListener.signOut());
     }
 
     private void btnNavCreateChatroom(final View view) {
-        view.findViewById(R.id.btnCreateGroup).setOnClickListener(v -> mListener.navCreateChatroom(new Chatroom("Chatroom test")));
-    }
-
-    private void btnNavAllChatrooms(final View view) {
-        view.findViewById(R.id.btnAllChatrooms).setOnClickListener(v -> mListener.navAllChatrooms());
-    }
-
-    private void btnSettings(final View view) {
-        view.findViewById(R.id.imageSettings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.settings(user);
-            }
-        });
-    }
-
-    private void setUser() {
-        DocumentReference docRef = db.collection("users").document(mAuth.getCurrentUser().getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    user = new User(document.getString("email"), document.getString("first_name"),
-                            document.getString("last_name"), document.getString("city"),
-                            document.getString("gender"), document.getString("image_location"));
-                } else {
-                    Log.d("TAG", "get failed with ", task.getException());
-                }
-            }
-        });
+        view.findViewById(R.id.imageButtonCreateChat).setOnClickListener(v -> mListener.navCreateChatroom(new Chatroom("Chatroom test")));
     }
 }

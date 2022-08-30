@@ -37,8 +37,6 @@ public class AllChatroomsRecyclerViewAdapter extends RecyclerView.Adapter<AllCha
 
         Chatroom chatroom = chatrooms.get(position);
         holder.chatroom = chatroom;
-
-        holder.imageViewChatroom.setImageResource(R.drawable.ic_launcher_background);
         holder.textViewChatroomName.setText(chatroom.getName());
         holder.imageViewBookmark.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
     }
@@ -61,7 +59,6 @@ public class AllChatroomsRecyclerViewAdapter extends RecyclerView.Adapter<AllCha
             super(itemView);
             rootView = itemView;
 
-            imageViewChatroom = itemView.findViewById(R.id.imageViewChatroom);
             textViewChatroomName = itemView.findViewById(R.id.textViewChatroomName);
             imageViewBookmark = itemView.findViewById(R.id.imageViewBookmark);
 

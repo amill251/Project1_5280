@@ -39,14 +39,15 @@ public class UserProfileFragment extends Fragment {
     FragmentUserProfileBinding binding;
 
     private static final String USER = "USER";
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
-
     User user;
 
     IListener mListener;
     public interface IListener {
         public void chooseProfileImage();
+        public void signOut();
     }
 
     @Override
@@ -85,7 +86,26 @@ public class UserProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentUserProfileBinding.inflate(inflater, container, false);
 
-        getActivity().setTitle("Profile");
+        if (mAuth.getCurrentUser().getEmail().equals(user.getEmail())) {
+            getActivity().setTitle("My Profile");
+            binding.imageUserProfile.setFocusable(true);
+            binding.inputUserProfileFirstName.setFocusable(true);
+            binding.inputUserProfileLastName.setFocusable(true);
+            binding.radioBtnUserProfileMale.setEnabled(true);
+            binding.radioBtnUserProfileFemale.setEnabled(true);
+            binding.imageButtonSave.setVisibility(View.VISIBLE);
+            binding.imageButtonLogout.setVisibility(View.VISIBLE);
+            onProfileImageClick();
+        } else {
+            getActivity().setTitle("Profile Detail");
+            binding.imageUserProfile.setFocusable(false);
+            binding.inputUserProfileFirstName.setFocusable(false);
+            binding.inputUserProfileLastName.setFocusable(false);
+            binding.radioBtnUserProfileMale.setEnabled(false);
+            binding.radioBtnUserProfileFemale.setEnabled(false);
+            binding.imageButtonSave.setVisibility(View.INVISIBLE);
+            binding.imageButtonLogout.setVisibility(View.INVISIBLE);
+        }
 
         binding.inputUserProfileFirstName.setText(user.getFirst_name());
         binding.inputUserProfileLastName.setText(user.getLast_name());
@@ -97,10 +117,7 @@ public class UserProfileFragment extends Fragment {
             binding.radioBtnUserProfileMale.setChecked(true);
         }
 
-        onProfileImageClick();
-
         downloadAndSetProfileImage();
-
         return binding.getRoot();
     }
 
@@ -108,7 +125,9 @@ public class UserProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.btnUserProfileSave.setOnClickListener(new View.OnClickListener() {
+        binding.imageButtonLogout.setOnClickListener(v -> mListener.signOut());
+
+        binding.imageButtonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String[] error = new String[1];
@@ -172,7 +191,6 @@ public class UserProfileFragment extends Fragment {
     }
 
     private void onProfileImageClick() {
-
 
         ImageView profileImage = binding.imageUserProfile;
 

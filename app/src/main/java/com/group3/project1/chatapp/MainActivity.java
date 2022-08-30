@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements
         SearchFragment.IListener, AllUsersFragment.IListener, CreateChatroomFragment.IListener,
         UserProfileFragment.IListener, FileChooserFragment.IListener, ForgotPasswordFragment.IListener {
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore db;
     private FirebaseStorage mStorage;
     private StorageReference storageReference;
@@ -58,10 +58,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-
         setContentView(binding.getRoot());
 
         if(mAuth.getCurrentUser() == null) {
@@ -77,10 +75,10 @@ public class MainActivity extends AppCompatActivity implements
             storageReference = mStorage.getReference();
 
             setUser();
-            //loginSuccess();
         }
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+
             switch (item.getItemId()) {
                 case R.id.chatroomsFragment:
                     replaceFragment(new ChatroomsFragment());
@@ -98,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void replaceFragment(Fragment fragment) {
+        setUser();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.containerview, fragment).commit();
@@ -155,25 +154,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void settings(User user) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerview, UserProfileFragment.newInstance(user), "UserProfileFragment")
-                .addToBackStack(null)
-                .commit();
-    }
-
-    @Override
     public void navChatroom(Chatroom chatroom) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, ChatroomFragment.newInstance(chatroom), "ChatroomFragment")
-                .addToBackStack(null)
-                .commit();
-    }
-
-    @Override
-    public void navAllChatrooms() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.containerview, new AllChatroomsFragment(), "AllChatroomsFragment")
                 .addToBackStack(null)
                 .commit();
     }
@@ -189,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements
         for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
             getSupportFragmentManager().popBackStack();
         }
+        setUser();
         binding.bottomNavigationView.setVisibility(View.VISIBLE);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new ChatroomsFragment(), "ChatroomsFragment")

@@ -32,8 +32,8 @@ public class Chatroom implements Serializable {
         this.id = id;
     }
 
-    public Chatroom(String image_location, String name) {
-        this.image_location = image_location;
+    public Chatroom(String name, String id) {
+        this.id = id;
         this.name = name;
     }
 

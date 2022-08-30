@@ -10,14 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.group3.project1.chatapp.R;
 import com.group3.project1.chatapp.models.Chatroom;
+import com.group3.project1.chatapp.models.ChatroomUser;
 
 import java.util.ArrayList;
 
 public class AllChatroomsRecyclerViewAdapter extends RecyclerView.Adapter<AllChatroomsRecyclerViewAdapter.ViewHolder> {
     ArrayList<Chatroom> chatrooms;
-    FirebaseAuth mAuth;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     public AllChatroomsRecyclerViewAdapter(ArrayList<Chatroom> chatrooms) {
         this.chatrooms = chatrooms;
@@ -61,6 +64,24 @@ public class AllChatroomsRecyclerViewAdapter extends RecyclerView.Adapter<AllCha
 
             textViewChatroomName = itemView.findViewById(R.id.textViewChatroomName);
             imageViewBookmark = itemView.findViewById(R.id.imageViewBookmark);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    DocumentReference userRef;
+                    DocumentReference chatroomRef;
+
+                    userRef = db.collection("users").document(mAuth.getCurrentUser().getUid());
+                    chatroomRef = db.collection("chatrooms").document(chatroom.getId());
+
+                    db.collection("chatroom_users")
+                            .document(chatroom.getId() +
+                                    "_" + mAuth.getUid())
+                            .set(new ChatroomUser(userRef, chatroomRef));
+                }
+            });
 
         }
     }

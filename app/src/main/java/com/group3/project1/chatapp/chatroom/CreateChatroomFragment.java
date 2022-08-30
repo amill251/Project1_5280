@@ -70,23 +70,27 @@ public class CreateChatroomFragment extends Fragment {
     private void btnSubmitChatroom(final View view) {
         view.findViewById(R.id.submit_new_chatroom).setOnClickListener(v -> {
                 EditText nameField = view.findViewById(R.id.chatroom_name_field);
-                Chatroom chatroom = new Chatroom(nameField.getText().toString());
+                Chatroom chatroom = new Chatroom(nameField.getText().toString(), null);
                 db = FirebaseFirestore.getInstance();
                 chatroom.setOwner(db.collection("users")
                         .document(mAuth.getCurrentUser().getUid()));
                 db.collection("chatrooms")
-                    .add(chatroom)
-                    .addOnSuccessListener(documentReference -> {
-                        db.collection("chatroom_users")
-                                .document(documentReference.getId() +
-                                        "_" + mAuth.getUid())
-                                .set(new ChatroomUser(chatroom.getOwner(), documentReference));
-                        mListener.createChatroom();
-                    })
-                    .addOnFailureListener(documentReference -> {
-                        Log.e("ERROR", "btnSubmitChatroom: ",
-                                documentReference.getCause());
-                    });
+                        .add(chatroom)
+                        .addOnSuccessListener(document-> {
+                            db.collection("chatrooms").document(document.getId())
+                                    .set(new Chatroom(nameField.getText().toString(), document.getId()));
+                        })
+                        .addOnSuccessListener(documentReference -> {
+                            db.collection("chatroom_users")
+                                    .document(documentReference.getId() +
+                                            "_" + mAuth.getUid())
+                                    .set(new ChatroomUser(chatroom.getOwner(), documentReference));
+                            mListener.createChatroom();
+                        })
+                        .addOnFailureListener(documentReference -> {
+                            Log.e("ERROR", "btnSubmitChatroom: ",
+                                    documentReference.getCause());
+                        });
             }
         );
     }

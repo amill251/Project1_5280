@@ -117,15 +117,15 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         public void setMsgOwnerImage(ImageView msgOwnerImage) {this.msgOwnerImage = msgOwnerImage;}
 
         public void updateLikeUI(int num, Message message) {
-            int curLikes = 0;
+            /*int curLikes = 0;
             if (!msgLikes.getText().toString().isEmpty()) {
                 curLikes = Integer.parseInt(msgLikes.getText().toString());
             }
 
-            curLikes += num;
-            message.setNumberOfLikes(curLikes);
+            curLikes += num;*/
+            message.setNumberOfLikes(message.getNumberOfLikes() + num);
             updateDBMessage(message);
-            msgLikes.setText(curLikes + "");
+            msgLikes.setText(message.getNumberOfLikes() + "");
         }
     }
 
@@ -157,8 +157,8 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
             @Override
             public void onClick(View v) {
 
-                Message localMessage = new Message(message);
-                holder.updateLikeUI(1, localMessage);
+//                Message localMessage = new Message(message);
+                holder.updateLikeUI(1, message);
             }
         });
     }

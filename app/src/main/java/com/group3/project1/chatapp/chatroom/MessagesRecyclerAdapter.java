@@ -30,11 +30,13 @@ import java.util.ArrayList;
 
 public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecyclerAdapter.MessagesViewHolder> {
 
-    ArrayList<Message> localMessagesList;
-    private LayoutInflater inflater;
-    FirebaseAuth mAuth;
+    private ArrayList<Message> localMessagesList;
+    private FirebaseAuth mAuth;
+    private final int SENT_MSG = 0;
+    private final int RECIEVED_MSG = 1;
+
+
     MessagesRecyclerAdapter(Context context, ArrayList messages) {
-        inflater = LayoutInflater.from(context);
         mAuth = mAuth = FirebaseAuth.getInstance();
         this.localMessagesList = messages;
     }
@@ -42,12 +44,36 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
     @NonNull
     @Override
     public MessagesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.chatroom_message, parent, false);
-        return new MessagesViewHolder(view);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        MessagesViewHolder viewHolder;
+        switch (viewType) {
+            case SENT_MSG:
+                View sentMsg = inflater.inflate(R.layout.chatroom_message_sent, parent, false);
+                viewHolder = new MessagesViewHolder(sentMsg);
+                break;
+            case RECIEVED_MSG:
+                View recievedMsg = inflater.inflate(R.layout.chatroom_message, parent, false);
+                viewHolder = new MessagesViewHolder(recievedMsg);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + viewType);
+        }
+
+        return viewHolder;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(localMessagesList.get(position).getUser_id().getId().equals(mAuth.getUid())) {
+            return SENT_MSG;
+        } else {
+            return RECIEVED_MSG;
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull MessagesViewHolder holder, int position) {
+
         Message currentMsg = localMessagesList.get(position);
 
         holder.setMessageText(currentMsg.getText());
@@ -55,9 +81,6 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
 
         String messageOwner = currentMsg.getUser_id().getId();
 
-        if(messageOwner.equals(mAuth.getUid())) {
-            holder.getMsgDelete().setVisibility(View.VISIBLE);
-        }
         // set msg owner name
         setMsgOwnerName(holder.getMsgOwnerName(), messageOwner);
 
@@ -68,7 +91,14 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         ImageUtil.downloadAndSetImage(currentMsg.getImage_location(),
                 FirebaseStorage.getInstance().getReference(), holder.getMsgOwnerImage());
 
-        onClickLikes(holder.msgLikesImage, position, holder, currentMsg);
+        switch (holder.getItemViewType()) {
+            case SENT_MSG:
+                onClickDelete(holder.msgDelete, position, holder, currentMsg);
+                break;
+            default:
+                break;
+        }
+
     }
 
     @Override
@@ -188,6 +218,15 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
 
 //                Message localMessage = new Message(message);
                 holder.updateLikeUI(1, message);
+            }
+        });
+    }
+
+    private void onClickDelete(ImageView delete, int position, MessagesViewHolder holder, Message message) {
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

@@ -2,15 +2,19 @@ package com.group3.project1.chatapp.models;
 
 import com.google.firebase.firestore.DocumentReference;
 
+import java.util.ArrayList;
+
 public class ChatroomUser {
     DocumentReference user;
     DocumentReference chatroom;
     Boolean is_viewing = false;
     Boolean is_Bookmarked = false;
+    ArrayList<String> userDocIds;
 
-    public ChatroomUser(DocumentReference user, DocumentReference chatroom) {
+    public ChatroomUser(DocumentReference user, DocumentReference chatroom, ArrayList<String> userDocIds) {
         this.user = user;
         this.chatroom = chatroom;
+        this.userDocIds = userDocIds;
     }
 
     public ChatroomUser(DocumentReference user, DocumentReference chatroom, Boolean is_Bookmarked) {
@@ -49,5 +53,13 @@ public class ChatroomUser {
 
     public void setIs_Bookmarked(Boolean is_Bookmarked) {
         this.is_Bookmarked = is_Bookmarked;
+    }
+
+    public ArrayList<String> getUserDocIds() {
+        return userDocIds;
+    }
+
+    public void setUserDocIds(ArrayList<String> userDocIds) {
+        this.userDocIds = userDocIds;
     }
 }

@@ -152,7 +152,7 @@ public class SignupFragment extends Fragment {
                                     if (task.isSuccessful()) {
                                         Log.d("myapp", "Register successful");
 
-                                        User newUser = new User(email, firstName, lastName, city, finalGender, null);
+                                        User newUser = new User(null, email, firstName, lastName, city, finalGender, null);
 
                                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                                         db.collection("users").document(mAuthLocal.getUid())

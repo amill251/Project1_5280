@@ -35,18 +35,22 @@ import com.group3.project1.chatapp.models.Chatroom;
 import com.group3.project1.chatapp.models.ChatroomUser;
 import com.group3.project1.chatapp.models.User;
 import com.group3.project1.chatapp.user.AllUsersFragment;
+import com.group3.project1.chatapp.user.CurrentChatRoomUsersFragment;
 import com.group3.project1.chatapp.user.ForgotPasswordFragment;
 import com.group3.project1.chatapp.user.LoginFragment;
 import com.group3.project1.chatapp.user.SignupFragment;
 import com.group3.project1.chatapp.user.UserProfileFragment;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements
         LoginFragment.IListener, SignupFragment.IListener, ChatroomsFragment.IListener,
         SearchFragment.IListener, AllUsersFragment.IListener, CreateChatroomFragment.IListener,
-        UserProfileFragment.IListener, FileChooserFragment.IListener, ForgotPasswordFragment.IListener {
+        UserProfileFragment.IListener, FileChooserFragment.IListener, ForgotPasswordFragment.IListener,
+        ChatroomFragment.IListener {
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore db;
@@ -115,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    user = new User(document.getString("email"), document.getString("first_name"),
+                    user = new User(document.getId(), document.getString("email"), document.getString("first_name"),
                             document.getString("last_name"), document.getString("city"),
                             document.getString("gender"), document.getString("image_location"));
                 } else {
@@ -284,5 +288,13 @@ public class MainActivity extends AppCompatActivity implements
     public void resetPasswordSuccess() {
         LoginFragment fragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag("LoginFragment");
         getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onClickCurrentUsers(List<String> currentUsers) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.containerview, CurrentChatRoomUsersFragment.newInstance((ArrayList)currentUsers), "CurrentChatRoomUsersFragment")
+                .addToBackStack(null)
+                .commit();
     }
 }

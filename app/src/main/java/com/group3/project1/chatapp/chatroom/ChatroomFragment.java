@@ -54,6 +54,7 @@ public class ChatroomFragment extends Fragment {
 
     ArrayList<Message> messagesList = new ArrayList<>();
     MessagesRecyclerAdapter messagesAdapter;
+    RecyclerView chatroomRecycleView;
     Chatroom currentChatroom;
     FirebaseFirestore db;
     FirebaseAuth mAuth;
@@ -153,6 +154,7 @@ public class ChatroomFragment extends Fragment {
                     message.setMessageDocumentId(messageId);
                     message.setChatRoomId(currentChatroom.getId());
                     messagesList.add(message);
+                    chatroomRecycleView.scrollToPosition(messagesList.size() - 1);
                     snapshotChanged = false;
                 } else if(documentChange.getType().equals(DocumentChange.Type.MODIFIED)) {
                     //TODO check to see what was modified on message
@@ -167,12 +169,10 @@ public class ChatroomFragment extends Fragment {
     }
 
     private void setupRecyclerView(View view) {
-        RecyclerView chatroomRecycleView = view.findViewById(R.id.chatroom_recycle_view);
+        chatroomRecycleView = view.findViewById(R.id.chatroom_recycle_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setStackFromEnd(true);
         chatroomRecycleView.setLayoutManager(layoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
-                layoutManager.getOrientation());
-        chatroomRecycleView.addItemDecoration(dividerItemDecoration);
         messagesAdapter = new MessagesRecyclerAdapter(getContext(), messagesList);
         chatroomRecycleView.setAdapter(messagesAdapter);
     }

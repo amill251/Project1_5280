@@ -93,6 +93,7 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         // set the current msg's owner image
         ImageUtil.downloadAndSetImage(currentMsg.getImage_location(),
                 FirebaseStorage.getInstance().getReference(), holder.getMsgOwnerImage());
+        onClickLikes(holder.msgLikesImage, position, holder, currentMsg);
 
         switch (holder.getItemViewType()) {
             case SENT_MSG:

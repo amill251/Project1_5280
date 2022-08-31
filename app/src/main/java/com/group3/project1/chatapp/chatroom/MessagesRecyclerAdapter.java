@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -32,12 +33,14 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
 
     private ArrayList<Message> localMessagesList;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private final int SENT_MSG = 0;
     private final int RECIEVED_MSG = 1;
 
 
     MessagesRecyclerAdapter(Context context, ArrayList messages) {
-        mAuth = mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         this.localMessagesList = messages;
     }
 
@@ -222,12 +225,33 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         });
     }
 
-    private void onClickDelete(ImageView delete, int position, MessagesViewHolder holder, Message message) {
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void onClickDelete(ImageView delete, int position,
+                               MessagesViewHolder holder, Message message) {
+        delete.setOnClickListener(v -> {
+            db.collection("chatrooms")
+                    .document(message.getChatRoomId())
+                    .collection("messages")
+                    .document(message.getMessageDocumentId())
+                    .delete().addOnSuccessListener(unused -> {
+                        if(position - 1 >= 0) {
+                            DocumentReference refLatestMsg = db.collection("chatrooms")
+                                    .document(message.getChatRoomId())
+                                    .collection("messages")
+                                    .document(localMessagesList.get(position - 1)
+                                            .getMessageDocumentId());
 
-            }
+                            db.collection("chatrooms")
+                                    .document(message.getChatRoomId())
+                                    .update("latest_message", refLatestMsg)
+                                    .addOnSuccessListener(unused1 ->
+                                            Log.d("DEBUG", "Successfully replaced latest_message"))
+                                    .addOnFailureListener(e -> {
+                                        Log.e("ERROR", "onClickDelete: ", e);
+                                    });
+                        }
+                        Log.d("DEBUG", "Successfully deleted message");
+                    })
+                    .addOnFailureListener(e -> Log.e("ERROR", e.getMessage()));
         });
     }
 
@@ -236,17 +260,9 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         db.collection("chatrooms")
                 .document(message.getChatRoomId() + "/messages/" + message.getMessageDocumentId())
                 .set(message)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d("myapp", "successfully updated message likes");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("myapp", "failed to update message likes");
-                    }
-                });
+                .addOnSuccessListener(unused ->
+                        Log.d("myapp", "successfully updated message likes"))
+                .addOnFailureListener(e ->
+                        Log.d("myapp", "failed to update message likes"));
     }
 }

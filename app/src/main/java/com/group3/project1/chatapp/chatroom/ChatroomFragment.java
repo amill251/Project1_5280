@@ -47,6 +47,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 
 public class ChatroomFragment extends Fragment {
@@ -147,7 +148,9 @@ public class ChatroomFragment extends Fragment {
             boolean snapshotChanged = true;
             for(DocumentChange documentChange: value.getDocumentChanges()) {
                 if(documentChange.getType().equals(DocumentChange.Type.REMOVED)) {
-                    //TODO find message and delete
+                    String deletedMsgId = documentChange.getDocument().getId();
+                    messagesList.removeIf(message -> message.getMessageDocumentId().equals(deletedMsgId));
+                    snapshotChanged = false;
                 } else if(documentChange.getType().equals(DocumentChange.Type.ADDED)){
                     Message message = documentChange.getDocument().toObject(Message.class);
                     String messageId = documentChange.getDocument().getId();

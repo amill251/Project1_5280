@@ -22,7 +22,7 @@ public class UserUtil {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    user[0] = new User(document.getString("email"), document.getString("first_name"),
+                    user[0] = new User(null, document.getString("email"), document.getString("first_name"),
                             document.getString("last_name"), document.getString("city"),
                             document.getString("gender"), document.getString("image_location"));
                 } else {

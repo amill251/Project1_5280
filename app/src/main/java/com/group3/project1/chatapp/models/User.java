@@ -15,7 +15,8 @@ public class User implements Serializable {
         // empty constructor
     }
 
-    public User(String email, String first_name, String last_name, String city, String gender, String image_location) {
+    public User(String id, String email, String first_name, String last_name, String city, String gender, String image_location) {
+        this.id = id;
         this.email = email;
         this.first_name = first_name;
         this.last_name = last_name;
@@ -37,6 +38,14 @@ public class User implements Serializable {
         this.gender = gender;
         this.image_location = image_location;
         this.is_deleted = is_deleted;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -108,11 +117,11 @@ public class User implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(first_name, user.first_name) && Objects.equals(last_name, user.last_name) && Objects.equals(city, user.city) && Objects.equals(gender, user.gender) && Objects.equals(image_location, user.image_location) && Objects.equals(is_deleted, user.is_deleted);
+        return email.equals(user.email) && username.equals(user.username) && first_name.equals(user.first_name) && last_name.equals(user.last_name) && city.equals(user.city) && gender.equals(user.gender) && id.equals(user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, username, first_name, last_name, city, gender, image_location, is_deleted);
+        return Objects.hash(email, username, first_name, last_name, city, gender, id);
     }
 }

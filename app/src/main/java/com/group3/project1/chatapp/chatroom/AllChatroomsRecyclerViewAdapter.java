@@ -129,10 +129,12 @@ public class AllChatroomsRecyclerViewAdapter extends RecyclerView.Adapter<AllCha
                                                 .delete();
                                         Log.d("TAG", "DocumentSnapshot data: " + document.getData());
                                     } else {
+                                        ArrayList<String> userDocIds = new ArrayList<>();
+                                        userDocIds.add(mAuth.getUid());
                                         db.collection("chatroom_users")
                                                 .document(chatroom.getId() +
                                                         "_" + mAuth.getUid())
-                                                .set(new ChatroomUser(userRef, chatroomRef));
+                                                .set(new ChatroomUser(userRef, chatroomRef, userDocIds));
                                         Log.d("TAG", "No such document");
                                     }
                                 }

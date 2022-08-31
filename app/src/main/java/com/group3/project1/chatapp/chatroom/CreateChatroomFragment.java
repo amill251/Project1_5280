@@ -125,10 +125,12 @@ public class CreateChatroomFragment extends Fragment implements CreateChatroomAd
                                     .set(new Chatroom(nameField.getText().toString(), document.getId()));
                         })
                         .addOnSuccessListener(documentReference -> {
+                            ArrayList<String> userDocIds = new ArrayList<>();
+                            userDocIds.add(mAuth.getUid());
                             db.collection("chatroom_users")
                                     .document(documentReference.getId() +
                                             "_" + mAuth.getUid())
-                                    .set(new ChatroomUser(chatroom.getOwner(), documentReference));
+                                    .set(new ChatroomUser(chatroom.getOwner(), documentReference, userDocIds));
                             mListener.createChatroom();
                         })
                         .addOnFailureListener(documentReference -> {

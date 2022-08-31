@@ -1,9 +1,11 @@
 package com.group3.project1.chatapp.chatroom;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -14,26 +16,41 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.group3.project1.chatapp.R;
+import com.group3.project1.chatapp.databinding.FragmentChatroomBinding;
 import com.group3.project1.chatapp.models.Chatroom;
 import com.group3.project1.chatapp.models.Message;
 import com.group3.project1.chatapp.models.User;
+import com.group3.project1.chatapp.user.UserProfileFragment;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class ChatroomFragment extends Fragment {
+    FragmentChatroomBinding binding;
 
     ArrayList<Message> messagesList = new ArrayList<>();
     MessagesRecyclerAdapter messagesAdapter;
@@ -43,8 +60,26 @@ public class ChatroomFragment extends Fragment {
 
     User user = null;
 
+    List<String> currentChatRoomUserDocIds = new ArrayList<>();
+
     public ChatroomFragment() {
         // Required empty public constructor
+    }
+
+    IListener mListener;
+    public interface IListener {
+        public void onClickCurrentUsers(List<String> currentUsers);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if (context instanceof IListener) {
+            mListener = (IListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement IListener");
+        }
     }
 
     public static ChatroomFragment newInstance(Chatroom chatroom) {
@@ -72,11 +107,15 @@ public class ChatroomFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chatroom, container, false);
+        binding = FragmentChatroomBinding.inflate(inflater, container, false);
         getActivity().setTitle(currentChatroom.getName());
         messagesList.clear();
         setupRecyclerView(view);
         btnSendMessage(view);
         loadMessages();
+
+        onClickCurrentUsers(view);
+
         return view;
     }
 
@@ -145,12 +184,71 @@ public class ChatroomFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    user = new User(document.getString("email"), document.getString("first_name"),
+                    user = new User(document.getId(),
+                            document.getString("email"), document.getString("first_name"),
                             document.getString("last_name"), document.getString("city"),
                             document.getString("gender"), document.getString("image_location"));
+
+                    addNewUserToChatRoom();
+                    notifyNewUserAddedToChatRoom();
                 } else {
                     Log.d("TAG", "get failed with ", task.getException());
                 }
+            }
+        });
+    }
+
+    private void addNewUserToChatRoom() {
+        db.collection("chatroom_users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots != null) {
+                    for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
+                       String id = snapshot.getId();
+                       if (currentChatroom != null && currentChatroom.getOwner() != null &&
+                                id.equalsIgnoreCase(currentChatroom.getId() + "_" + currentChatroom.getOwner().getId())) {
+                           currentChatRoomUserDocIds = (List) snapshot.getData().get("userDocIds");
+                           Log.d("myapp", currentChatRoomUserDocIds + "");
+
+                           if (user != null && currentChatRoomUserDocIds != null && !currentChatRoomUserDocIds.contains(user.getId())) {
+                               currentChatRoomUserDocIds.add(user.getId());
+                               Log.d("myapp", "user " + user.getId() + " added to current chat room");
+
+                               updateCurrentChatRoomUsers();
+                           }
+                       }
+                    }
+                }
+            }
+        });
+    }
+
+    private void notifyNewUserAddedToChatRoom() {
+        String documentId = currentChatroom.getId() + "_" + user.getId();
+        db.collection("chatroom_users").document(documentId)
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                        currentChatRoomUserDocIds = (List<String>) value.get("userDocIds");
+
+                        Log.d("myapp", "notify new user added to chat room");
+                    }
+                });
+    }
+
+    private void updateCurrentChatRoomUsers() {
+        Map<String, Object> record = new HashMap<String, Object>();
+        record.put("userDocIds", currentChatRoomUserDocIds);
+        db.collection("chatroom_users").document(currentChatroom.getId() + "_" + currentChatroom.getOwner().getId())
+                .update(record);
+    }
+
+    private void onClickCurrentUsers(View view) {
+        TextView currentUsers = view.findViewById(R.id.textViewCurrentUsers);
+        currentUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onClickCurrentUsers(currentChatRoomUserDocIds);
             }
         });
     }

@@ -2,59 +2,103 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraint_layout"
+    android:background="@color/chatroom_background"
+    android:paddingHorizontal="4dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/message_text"
-        android:layout_width="333dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/message_profile"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_margin="2dp"
+        android:maxHeight="67dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <ImageView
+            android:id="@+id/imageViewMsgOwner"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/ic_baseline_person_24"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            tools:srcCompat="@drawable/ic_baseline_person_24" />
 
-    <TextView
-        android:id="@+id/textViewMsgDateTime"
-        android:layout_width="90dp"
-        android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textViewChatMsgOwnerName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textViewChatMsgOwnerName" />
+        <TextView
+            android:id="@+id/textViewChatMsgOwnerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:width="64dp"
+            android:paddingRight="4dp"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewMsgOwner"
+            app:layout_constraintLeft_toLeftOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/imageViewMsgOwner"
-        android:layout_width="38dp"
-        android:layout_height="35dp"
-        android:src="@drawable/ic_baseline_person_24"
-        app:layout_constraintStart_toStartOf="@+id/message_text"
-        app:layout_constraintTop_toBottomOf="@+id/message_text"
-        tools:srcCompat="@drawable/ic_baseline_person_24" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/message_card"
+        app:layout_constraintLeft_toRightOf="@id/message_profile"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="6dp"
+        android:layout_marginVertical="4dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="4dp"
+            android:paddingLeft="4dp">
+            <TextView
+                android:id="@+id/message_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/textViewMsgDateTime"
+                app:layout_constraintRight_toLeftOf="@id/imageLikes"/>
+            <ImageView
+                android:id="@+id/message_delete"
+                android:visibility="gone"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_margin="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:srcCompat="@drawable/delete"
+                android:src="@drawable/delete" />
+            <ImageView
+                android:id="@+id/imageLikes"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:layout_constraintRight_toLeftOf="@id/textViewMsgLikes"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:srcCompat="@drawable/like"
+                android:src="@drawable/like" />
+            <TextView
+                android:textAlignment="textEnd"
+                android:id="@+id/textViewMsgLikes"
+                android:layout_width="16dp"
+                android:layout_marginHorizontal="2dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintRight_toLeftOf="@id/message_delete"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewChatMsgOwnerName"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/imageViewMsgOwner"
-        app:layout_constraintStart_toEndOf="@+id/imageViewMsgOwner" />
-
-    <ImageView
-        android:id="@+id/imageLikes"
-        android:layout_width="41dp"
-        android:layout_height="29dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.407"
-        app:layout_constraintStart_toEndOf="@+id/message_text"
-        app:layout_constraintTop_toTopOf="@+id/message_text"
-        tools:srcCompat="@drawable/like"
-        android:src="@drawable/like" />
-
-    <TextView
-        android:id="@+id/textViewMsgLikes"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/imageLikes"
-        app:layout_constraintStart_toStartOf="@+id/imageLikes"
-        app:layout_constraintTop_toBottomOf="@+id/imageLikes" />
+            <TextView
+                android:id="@+id/textViewMsgDateTime"
+                android:textSize="10sp"
+                android:layout_marginLeft="2dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

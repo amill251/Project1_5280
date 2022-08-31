@@ -9,10 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -28,9 +32,10 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
 
     ArrayList<Message> localMessagesList;
     private LayoutInflater inflater;
-
+    FirebaseAuth mAuth;
     MessagesRecyclerAdapter(Context context, ArrayList messages) {
         inflater = LayoutInflater.from(context);
+        mAuth = mAuth = FirebaseAuth.getInstance();
         this.localMessagesList = messages;
     }
 
@@ -48,8 +53,13 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         holder.setMessageText(currentMsg.getText());
         holder.addToLikes(currentMsg.getNumberOfLikes());
 
+        String messageOwner = currentMsg.getUser_id().getId();
+
+        if(messageOwner.equals(mAuth.getUid())) {
+            holder.getMsgDelete().setVisibility(View.VISIBLE);
+        }
         // set msg owner name
-        setMsgOwnerName(holder.getMsgOwnerName(), currentMsg.getUser_id().getId());
+        setMsgOwnerName(holder.getMsgOwnerName(), messageOwner);
 
         String dateStr = DateUtil.firebaseTimestampToString(currentMsg.getTime_created());
         holder.setMessageDateTime(dateStr);
@@ -73,6 +83,11 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         TextView msgOwnerName;
         ImageView msgOwnerImage;
         ImageView msgLikesImage;
+        ConstraintLayout msgProfile;
+        CardView msgCard;
+        ConstraintLayout constraintLayout;
+
+        ImageView msgDelete;
 
         public MessagesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -82,7 +97,21 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
             msgOwnerName = itemView.findViewById(R.id.textViewChatMsgOwnerName);
             msgOwnerImage = itemView.findViewById(R.id.imageViewMsgOwner);
             msgLikesImage = itemView.findViewById(R.id.imageLikes);
+            msgProfile = itemView.findViewById(R.id.message_profile);
+            msgCard = itemView.findViewById(R.id.message_card);
+            constraintLayout = itemView.findViewById(R.id.constraint_layout);
+            msgDelete = itemView.findViewById(R.id.message_delete);
         }
+
+
+        public ImageView getMsgDelete() {
+            return msgDelete;
+        }
+
+        public void setMsgDelete(ImageView msgDelete) {
+            this.msgDelete = msgDelete;
+        }
+
 
         public TextView getMessageText() {
             return messageText;

@@ -9,7 +9,7 @@
 [Wireframe - Justinmind.com](https://www.justinmind.com/usernote/tests/72514794/72516392/72516394/index.html)
 
 ## Link to Youtube Channel
-[Project Demo](https://www.youtube.com/channel/UCKwWHD5A_Sd6AjV6KCnus1A)
+[Project Demo](https://youtu.be/CvF-QhZMxes)
 
 ---
 ## Project Purpose
@@ -50,3 +50,9 @@ In this assignment you should work on creating a simple chat application using F
    - Push your code to the created repo. Should contain all your code.
    - On the same repo create a wiki page describing your design and implementation. The wiki page should describe the data design choices.
 - Demo your App and record an app screencast showing the different app features. Your video should be posted on Youtube and a link included in the Github Wiki page. Make sure the YouTube video is public or link only so that it is viewable through the shared link.
+
+#### Implementation
+
+We chose to start off with an RDS schema, and then convert that schema into a NoSQL model. This worked well to keep our data clean, however we realized after another classroom session that this can impact the performance of our app. For next time, we would probably opt in to duplicate data in more places and not joining across collections to make the data model more efficient and easier to work with in a NoSQL database.
+Also, we ended up with extra features in our application such as the "My Chatrooms" vs "All Chatrooms" view because of a misunderstanding with the instructions. This had an impact with the complexity of our data model as well. 
+We chose to have a collection joining chatroom_users to join the users that are in a chatroom.

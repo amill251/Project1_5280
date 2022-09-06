@@ -106,34 +106,36 @@ public class ChatroomsFragment extends Fragment {
 
     private void loadChatrooms(View view) {
 
-        db.collection("chatroom_users")
-                .whereEqualTo("user", db.collection("users").document(mAuth.getUid()))
-                .addSnapshotListener((value, error) -> {
-                    for(QueryDocumentSnapshot documentSnapshot: value) {
-                        ((DocumentReference)documentSnapshot.get("chatroom"))
-                                .addSnapshotListener((documentSnapshotChatroom, error2) -> {
-                                    Map map = documentSnapshotChatroom.getData();
-                                    Chatroom chatroom = null;
-                                    try {
-                                        chatroom = new Chatroom(
-                                                (String) map.get("image_location"),
-                                                (Boolean) map.get("is_deleted"),
-                                                (String) map.get("name"),
-                                                (DocumentReference) map.get("owner"),
-                                                (DocumentReference) map.get("latest_message"),
-                                                (String) documentSnapshotChatroom.getId()
-                                        );
-                                    } catch (Exception e) {
-                                        Log.e("ERROR", "loadChatrooms: ", e);
-                                    }
+        if(mAuth != null) {
+            db.collection("chatroom_users")
+                    .whereEqualTo("user", db.collection("users").document(mAuth.getUid()))
+                    .addSnapshotListener((value, error) -> {
+                        for(QueryDocumentSnapshot documentSnapshot: value) {
+                            ((DocumentReference)documentSnapshot.get("chatroom"))
+                                    .addSnapshotListener((documentSnapshotChatroom, error2) -> {
+                                        Map map = documentSnapshotChatroom.getData();
+                                        Chatroom chatroom = null;
+                                        try {
+                                            chatroom = new Chatroom(
+                                                    (String) map.get("image_location"),
+                                                    (Boolean) map.get("is_deleted"),
+                                                    (String) map.get("name"),
+                                                    (DocumentReference) map.get("owner"),
+                                                    (DocumentReference) map.get("latest_message"),
+                                                    (String) documentSnapshotChatroom.getId()
+                                            );
+                                        } catch (Exception e) {
+                                            Log.e("ERROR", "loadChatrooms: ", e);
+                                        }
 
-                                    if (!chatroomList.contains(chatroom))
-                                        chatroomList.add(chatroom);
-                                    chatroomsAdapter.notifyDataSetChanged();
-                                });
+                                        if (!chatroomList.contains(chatroom))
+                                            chatroomList.add(chatroom);
+                                        chatroomsAdapter.notifyDataSetChanged();
+                                    });
 
-                    }
-                });
+                        }
+                    });
+        }
     }
 
     private void btnSignOut(final View view) {

@@ -49,8 +49,12 @@ public class ChatroomsRecyclerAdapter extends RecyclerView.Adapter<ChatroomsRecy
             db.document(refLatestMessage.getPath())
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
-                        Message message = documentSnapshot.toObject(Message.class);
-                        holder.setLatestMessage(message.getText());
+                        try {
+                            Message message = documentSnapshot.toObject(Message.class);
+                            holder.setLatestMessage(message.getText());
+                        } catch(Exception e) {
+
+                        }
                     })
                     .addOnFailureListener(e -> Log.e("ERROR", "onFailure: ", e));
         }

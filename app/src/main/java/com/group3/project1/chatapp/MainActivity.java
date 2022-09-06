@@ -143,12 +143,12 @@ public class MainActivity extends AppCompatActivity implements
         for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
             getSupportFragmentManager().popBackStack();
         }
-        mAuth.signOut();
-        binding.bottomNavigationView.setVisibility(View.INVISIBLE);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.containerview, new LoginFragment(), "LoginFragment")
                 .addToBackStack(null)
                 .commit();
+        mAuth.signOut();
+        binding.bottomNavigationView.setVisibility(View.INVISIBLE);
     }
 
     @Override

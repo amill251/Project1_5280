@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout6"
     android:layout_width="match_parent"
+    android:padding="16dp"
     android:layout_height="match_parent"
     tools:context=".user.CurrentChatRoomUsersFragment">
 
@@ -11,6 +12,7 @@
     <TextView
         android:id="@+id/textViewCurrentChatRoomUsers"
         android:layout_width="0dp"
+        android:textSize="20dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
